@@ -64,6 +64,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "phone_num",
             "birthdate",
             "profile_picture",
+            "pets",
+            "conversations",
+            "admin_conversations",
+            "meetups",
+            "meetups_admin",
         ]
 
 
