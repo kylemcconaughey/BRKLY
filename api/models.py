@@ -23,27 +23,27 @@ class Dog(models.Model):
     )
 
     class EnergyChoices(models.TextChoices):
-        HI = "HIGH", ("High Energy")
-        MD = "MEDIUM", ("Medium Energy")
-        LO = "LOW", ("Low Energy")
+        HI = "HI", ("High Energy")
+        MD = "MD", ("Medium Energy")
+        LO = "LO", ("Low Energy")
 
     energy = models.CharField(
         max_length=2, choices=EnergyChoices.choices, default=EnergyChoices.MD
     )
 
     class TemperChoices(models.TextChoices):
-        AGR = "AGGRESSIVE", ("Aggressive")
-        NML = "NORMAL", ("Normal")
-        CHL = "CHILL", ("Relaxed")
+        AGR = "AGR", ("Aggressive")
+        NML = "NML", ("Normal")
+        CHL = "CHL", ("Relaxed")
 
     temper = models.CharField(
         max_length=3, choices=TemperChoices.choices, default=TemperChoices.NML
     )
 
     class GroupChoices(models.TextChoices):
-        ONE = "SOLO", ("ONE ON ONE")
-        BIG = "LARGE GROUP", ("GOOD IN LARGE GROUPS")
-        SML = "SMALL GROUP", ("GOOD IN SMALL GROUPS")
+        ONE = "ONE", ("ONE ON ONE")
+        BIG = "BIG", ("GOOD IN LARGE GROUPS")
+        SML = "SML", ("GOOD IN SMALL GROUPS")
         ANY = "ANY", ("GOOD IN ANY SETTING")
 
     group_size = models.CharField(
@@ -52,7 +52,7 @@ class Dog(models.Model):
 
     class VaccineChoices(models.TextChoices):
         VAC = "YES", ("VACCINATED")
-        NOT = "NO", ("I AM TERRIBLE DOG OWNER")
+        NOT = "NOT", ("I AM TERRIBLE DOG OWNER")
 
     vaccinated = models.CharField(
         max_length=3, choices=VaccineChoices.choices, default=VaccineChoices.VAC

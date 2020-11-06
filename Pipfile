@@ -18,6 +18,7 @@ djoser = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"
