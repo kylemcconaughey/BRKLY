@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "djoser",
+    "django-cors-headers",
     # Project-specific
     "users",
     "api",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -154,3 +156,5 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
