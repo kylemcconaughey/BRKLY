@@ -12,6 +12,7 @@ django-debug-toolbar = "*"
 werkzeug = "*"
 django-environ = "*"
 psycopg2 = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
