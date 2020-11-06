@@ -47,7 +47,7 @@ class Dog(models.Model):
         ANY = "ANY", ("GOOD IN ANY SETTING")
 
     group_size = models.CharField(
-        max_length=3, choices=GroupChoices.choices, defaul=GroupChoices.ONE
+        max_length=3, choices=GroupChoices.choices, default=GroupChoices.ONE
     )
 
     class VaccineChoices(models.TextChoices):
