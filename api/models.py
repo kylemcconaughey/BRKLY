@@ -68,9 +68,7 @@ class Dog(models.Model):
 
 
 class Conversation(models.Model):
-    members = models.ManyToManyField(
-        to="User", on_delete=models.CASCADE, related_name="conversations"
-    )
+    members = models.ManyToManyField(to="User", related_name="conversations")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -109,16 +107,12 @@ class Message(models.Model):
 
     body = models.TextField(null=True, blank=True)
 
-    reactions = models.ManyToManyField(
-        to="Reaction", on_delete=models.CASCADE, related_name="message"
-    )
+    reactions = models.ManyToManyField(to="Reaction", related_name="message")
 
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
-    read_by = models.ManyToManyField(
-        to="User", on_delete=models.CASCADE, related_name="messages_read"
-    )
+    read_by = models.ManyToManyField(to="User", related_name="messages_read")
 
 
 class Meetup(models.Model):
@@ -126,11 +120,9 @@ class Meetup(models.Model):
         to="User", on_delete=models.CASCADE, related_name="meetups_admin"
     )
 
-    # invited = models.ManyToManyField(to="User", on_delete=models.CASCADE, related_name="meetup_invites")
+    # invited = models.ManyToManyField(to="User", related_name="meetup_invites")
 
-    attending = models.ManyToManyField(
-        to="User", on_delete=models.CASCADE, related_name="meetups"
-    )
+    attending = models.ManyToManyField(to="User", related_name="meetups")
 
     start_time = models.DateTimeField(null=False, blank=False)
 
