@@ -14,9 +14,13 @@ class Dog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class SizeChoices(models.TextChoices):
-        SMALL = "S", ("SMALL")
-        MEDIUM = "M", ("MEDIUM")
-        LARGE = "L", ("LARGE")
+        SML = "S", ("SMALL")
+        MED = "M", ("MEDIUM")
+        LRG = "L", ("LARGE")
+
+    size = models.CharField(
+        max_length=3, choices=SizeChoices.choices, default=SizeChoices.MED
+    )
 
     class EnergyChoices(models.TextChoices):
         pass
@@ -26,17 +30,29 @@ class Dog(models.Model):
 
     class GroupChoices(models.TextChoices):
         ONE = "SOLO", ("ONE ON ONE")
-        LARGE = "LARGE GROUP", ("GOOD IN LARGE GROUPS")
-        SMALL = "SMALL GROUP", ("GOOD IN SMALL GROUPS")
+        BIG = "LARGE GROUP", ("GOOD IN LARGE GROUPS")
+        SML = "SMALL GROUP", ("GOOD IN SMALL GROUPS")
         ANY = "ANY", ("GOOD IN ANY SETTING")
 
+    group_size = models.CharField(
+        max_length=3, choices=GroupChoices.choices, defaul=GroupChoices.ONE
+    )
+
     class VaccineChoices(models.TextChoices):
-        VACCINATED = "YES", ("VACCINATED")
+        VAC = "YES", ("VACCINATED")
         NOT = "NO", ("I AM TERRIBLE DOG OWNER")
 
+    vaccinated = models.CharField(
+        max_length=3, choices=VaccineChoices.choices, default=VaccineChoices.VAC
+    )
+
     class ChildrenChoices(models.TextChoices):
-        YES = "Y", ("GOOD WITH CHILDREN")
-        NO = "N", ("NOT GOOD WITH CHILDREN")
+        Y = "Y", ("GOOD WITH CHILDREN")
+        N = "N", ("NOT GOOD WITH CHILDREN")
+
+    kid_friendly = models.CharField(
+        max_length=1, choices=ChildrenChoices.choices, default=ChildrenChoices.Y
+    )
 
 
 class Conversation(models.Model):

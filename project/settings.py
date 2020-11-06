@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_extensions",
     "rest_framework",
+    "djoser",
     # Project-specific
     "users",
     "api",
@@ -145,3 +146,11 @@ import django_heroku
 
 django_heroku.settings(locals())
 del DATABASES["default"]["OPTIONS"]["sslmode"]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ]
+}
