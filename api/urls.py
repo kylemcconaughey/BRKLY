@@ -8,6 +8,11 @@ api_router = routers.DefaultRouter()
 
 api_router.register("dogs", api_views.DogViewSet, basename="dog")
 api_router.register("users", api_views.UserViewSet, basename="user")
+api_router.register(
+    "conversations", api_views.ConversationViewSet, basename="conversation"
+)
+api_router.register("messages", api_views.MessageViewSet, basename="message")
+api_router.register("meetups", api_views.MeetupViewSet, basename="meetup")
 
 urlpatterns = [
     path("", include(api_router.urls)),

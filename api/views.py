@@ -65,3 +65,45 @@ class UserViewSet(ModelViewSet):
         )
         serializer = UserSerializer(user, context={"request": request})
         return Response(serializer.data)
+
+
+class ConversationViewSet(ModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Conversation.objects.all()
+            .prefetch_related("members")
+            .select_related("admin")
+        )
+
+
+class MessageViewSet(ModelViewSet):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Message.objects.all()
+            .select_related("sender", "conversation")
+            .prefetch_related("reactions", "read_by")
+        )
+
+
+class MeetupViewSet(ModelViewSet):
+    serializer_class = MeetupSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Meetup.objects.all().select_related("admin").prefetch_related("attending")
+        )
+
+
+class ReactionViewSet(ModelViewSet):
+    serializer_class = ReactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Reaction.objects.all()
