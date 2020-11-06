@@ -22,6 +22,7 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
+    path("", include("api.urls")),
 ]
 
 if settings.DEBUG:

@@ -95,7 +95,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class MeetupSerializer(serializer.ModelSerializer):
+class MeetupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meetup
         fields = [

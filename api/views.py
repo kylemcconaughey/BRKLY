@@ -15,6 +15,7 @@ from .serializers import (
     MeetupSerializer,
     MessageSerializer,
     ReactionSerializer,
+    UserSerializer,
 )
 
 
