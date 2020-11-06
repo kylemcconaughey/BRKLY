@@ -1,1 +1,1 @@
-web: gunicorn brkly.wsgi
+web: gunicorn project.wsgi
