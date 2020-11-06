@@ -20,6 +20,8 @@ markdown = "*"
 django-filter = "*"
 pillow = "*"
 django-cors-headers = "*"
+boto3 = "*"
+django-storages = "*"
 
 [requires]
 python_version = "3.8"
