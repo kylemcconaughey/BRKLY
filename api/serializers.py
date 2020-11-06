@@ -64,7 +64,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "phone_num",
             "birthdate",
             "profile_picture",
-            "pets",
+            "dogs",
             "conversations",
             "admin_conversations",
             "meetups",
@@ -86,6 +86,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = serializers.HyperlinkedRelatedField(
         view_name="user-detail", read_only=True
     )
+    reactions = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Message
