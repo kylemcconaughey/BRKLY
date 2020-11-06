@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "djoser",
-    "django-cors-headers",
+    "corsheaders",
     # Project-specific
     "users",
     "api",
