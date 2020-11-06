@@ -7,8 +7,8 @@ from users.models import User
 class Dog(models.Model):
 
     owner = models.ForeignKey(to="User", on_delete=models.CASCADE, related_name="dogs")
-    name = models.CharField(null=False, blank=False)
-    breed = models.CharField(null=False, blank=False)
+    name = models.CharField(null=False, blank=False, max_length=63)
+    breed = models.CharField(null=False, blank=False, max_length=63)
     picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
     age = models.IntegerField(blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -72,10 +72,12 @@ class Conversation(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    convo_name = models.CharField(null=False, blank=False, default="New Conversation")
+    convo_name = models.CharField(
+        null=False, blank=False, default="New Conversation", max_length=63
+    )
 
     admin = models.ForeignKey(
-        to="User", on_delete=models.PROTECT, related_name="admin_conversations"
+        to="User", on_delete=models.CASCADE, related_name="admin_conversations"
     )
 
     def preview(self):
@@ -128,7 +130,7 @@ class Meetup(models.Model):
 
     end_time = models.DateTimeField(null=True, blank=True)
 
-    location = models.CharField(null=False, blank=False)
+    location = models.CharField(null=False, blank=False, max_length=255)
     # needs auto-fill options pulled from geo-API
 
     # recurring = models.whoTheHellKnows
