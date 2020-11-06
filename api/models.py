@@ -6,7 +6,7 @@ from users.models import User
 
 class Dog(models.Model):
 
-    owner = models.ForeignKey(to="User", on_delete=models.CASCADE, related_name="dogs")
+    owner = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="dogs")
     name = models.CharField(null=False, blank=False, max_length=63)
     breed = models.CharField(null=False, blank=False, max_length=63)
     picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
@@ -68,7 +68,7 @@ class Dog(models.Model):
 
 
 class Conversation(models.Model):
-    members = models.ManyToManyField(to="User", related_name="conversations")
+    members = models.ManyToManyField(to=User, related_name="conversations")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -77,7 +77,7 @@ class Conversation(models.Model):
     )
 
     admin = models.ForeignKey(
-        to="User", on_delete=models.CASCADE, related_name="admin_conversations"
+        to=User, on_delete=models.CASCADE, related_name="admin_conversations"
     )
 
     def preview(self):
@@ -98,7 +98,7 @@ class Reaction(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(
-        to="User", on_delete=models.CASCADE, related_name="messages_sent"
+        to=User, on_delete=models.CASCADE, related_name="messages_sent"
     )
 
     conversation = models.ForeignKey(
@@ -114,17 +114,17 @@ class Message(models.Model):
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
-    read_by = models.ManyToManyField(to="User", related_name="messages_read")
+    read_by = models.ManyToManyField(to=User, related_name="messages_read")
 
 
 class Meetup(models.Model):
     admin = models.ForeignKey(
-        to="User", on_delete=models.CASCADE, related_name="meetups_admin"
+        to=User, on_delete=models.CASCADE, related_name="meetups_admin"
     )
 
-    # invited = models.ManyToManyField(to="User", related_name="meetup_invites")
+    # invited = models.ManyToManyField(to=User, related_name="meetup_invites")
 
-    attending = models.ManyToManyField(to="User", related_name="meetups")
+    attending = models.ManyToManyField(to=User, related_name="meetups")
 
     start_time = models.DateTimeField(null=False, blank=False)
 
