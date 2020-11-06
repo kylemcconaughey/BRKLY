@@ -95,6 +95,10 @@ class Reaction(models.Model):
         max_length=2, choices=ReactionChoices.choices, default=ReactionChoices.LIKE
     )
 
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="reactions"
+    )
+
 
 class Message(models.Model):
     sender = models.ForeignKey(

@@ -72,6 +72,7 @@ class ReactionSerializer(serializers.ModelSerializer):
         model = Reaction
         fields = [
             "reaction",
+            "user",
         ]
 
 

@@ -106,4 +106,4 @@ class ReactionViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Reaction.objects.all()
+        return Reaction.objects.all().select_related("user")
