@@ -13,6 +13,7 @@ api_router.register(
 )
 api_router.register("messages", api_views.MessageViewSet, basename="message")
 api_router.register("meetups", api_views.MeetupViewSet, basename="meetup")
+api_router.register("reactions", api_views.ReactionViewSet, basename="reaction")
 
 urlpatterns = [
     path("", include(api_router.urls)),
