@@ -23,10 +23,22 @@ class Dog(models.Model):
     )
 
     class EnergyChoices(models.TextChoices):
-        pass
+        HI = "HIGH", ("High Energy")
+        MD = "MEDIUM", ("Medium Energy")
+        LO = "LOW", ("Low Energy")
+
+    energy = models.CharField(
+        max_length=2, choices=EnergyChoices.choices, default=EnergyChoices.MD
+    )
 
     class TemperChoices(models.TextChoices):
-        pass
+        AGR = "AGGRESSIVE", ("Aggressive")
+        NML = "NORMAL", ("Normal")
+        CHL = "CHILL", ("Relaxed")
+
+    temper = models.CharField(
+        max_length=3, choices=TemperChoices.choices, default=TemperChoices.NML
+    )
 
     class GroupChoices(models.TextChoices):
         ONE = "SOLO", ("ONE ON ONE")

@@ -14,6 +14,8 @@ class DogSerializer(serializers.ModelSerializer):
             "age",
             "created_at",
             "size",
+            "energy",
+            "temper",
             "group_size",
             "vaccinated",
             "kid_friendly",
@@ -91,33 +93,15 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             "image",
             "read_by",
         ]
+
+
 class MeetupSerializer(serializer.ModelSerializer):
     class Meta:
         model = Meetup
         fields = [
             "admin",
-            "attend"
-
+            "attending",
+            "start_time",
+            "end_time",
+            "location",
         ]
-
-"""
-class Meetup(models.Model):
-    admin = models.ForeignKey(
-        to="User", on_delete=models.CASCADE, related_name="meetups_admin"
-    )
-
-    # invited = models.ManyToManyField(to="User", on_delete=models.CASCADE, related_name="meetup_invites")
-
-    attending = models.ManyToManyField(
-        to="User", on_delete=models.CASCADE, related_name="meetups"
-    )
-
-    start_time = models.DateTimeField(null=False, blank=False)
-
-    end_time = models.DateTimeField(null=True, blank=True)
-
-    location = models.CharField(null=False, blank=False)
-    # needs auto-fill options pulled from geo-API
-
-    # recurring = models.whoTheHellKnows
-"""
