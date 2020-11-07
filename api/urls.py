@@ -14,6 +14,9 @@ api_router.register(
 api_router.register("messages", api_views.MessageViewSet, basename="message")
 api_router.register("meetups", api_views.MeetupViewSet, basename="meetup")
 api_router.register("reactions", api_views.ReactionViewSet, basename="reaction")
+api_router.register("posts", api_views.PostViewSet, basename="post")
+api_router.register("comments", api_views.CommentViewSet, basename="comment")
+
 
 urlpatterns = [
     path("", include(api_router.urls)),
