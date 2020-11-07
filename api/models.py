@@ -138,3 +138,85 @@ class Meetup(models.Model):
     # needs auto-fill options pulled from geo-API
 
     # recurring = models.whoTheHellKnows
+
+
+class Post(models.Model):
+    body = models.CharField(max_length=255, null=False, blank=False)
+
+    dog = models.ForeignKey(to=Dog, on_delete=models.CASCADE, related_name="posts")
+
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="posts")
+
+    class FontStyleChoices(models.TextChoices):
+        NORMAL = "N", ("Normal")
+        ITALICS = "I", ("Italics")
+        BOLD = "B", ("Bold")
+        UNDERLINE = "U", ("Underline")
+
+    font_style = models.CharField(
+        max_length=1, choices=FontStyleChoices.choices, default=FontStyleChoices.NORMAL
+    )
+
+    class TextAlignChoices(models.TextChoices):
+        LEFT = "L", ("Left")
+        RIGHT = "R", ("Right")
+        CENTER = "C", ("Center")
+        JUSTIFIED = (
+            "J",
+            ("Justified"),
+        )
+
+    text_align = models.CharField(
+        max_length=1,
+        choices=TextAlignChoices.choices,
+        default=TextAlignChoices.LEFT,
+    )
+
+    class FontSizeChoices(models.IntegerChoices):
+        SMALL = (
+            "0",
+            ("Small"),
+        )
+        MEDIUM = (
+            "1",
+            ("Medium"),
+        )
+        LARGE = (
+            "2",
+            ("Large"),
+        )
+        XLARGE = (
+            "3",
+            ("Xtra Large"),
+        )
+
+    font_size = models.IntegerField(
+        choices=FontSizeChoices.choices,
+        default=FontSizeChoices.MEDIUM,
+    )
+
+    image = models.ImageField(upload_to="post_images/", null=True, blank=True)
+
+    liked_by = models.ManyToManyField(to=User, related_name="liked_posts", blank=True)
+
+    def __str__(self):
+        return f"{self.id}"
+
+
+class Comment(models.Model):
+    body = models.CharField(max_length=255, blank=False, null=False)
+
+    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name="comments")
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="comments")
+
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    liked_by = models.ManyToManyField(
+        to=User, related_name="liked_comments", blank=True
+    )
+
+    def __str__(self):
+        return f"{self.body}"

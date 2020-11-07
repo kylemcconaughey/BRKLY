@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from users.models import User
-from .models import Dog, Message, Conversation, Reaction, Meetup
+from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment
 
 
 class DogSerializer(serializers.ModelSerializer):
@@ -112,3 +112,44 @@ class MeetupSerializer(serializers.ModelSerializer):
             "end_time",
             "location",
         ]
+
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    liked_by = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["user", "id", "url", "body", "posted_at", "post", "liked_by"]
+
+
+class PostSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    liked_by = serializers.StringRelatedField(many=True, read_only=True)
+    user_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            "user",
+            "dog",
+            "user_id",
+            "body",
+            "image",
+            "posted_at",
+            "id",
+            "url",
+            "font_style",
+            "text_align",
+            "font_size",
+            "liked_by",
+            "comments",
+        ]
+
+
+# For use when displaying sub-lists of users, in which you don't want to see all their information
+class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "id", "url"]

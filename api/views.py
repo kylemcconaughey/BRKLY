@@ -8,7 +8,7 @@ from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
 
-from .models import Conversation, Dog, Meetup, Message, Reaction
+from .models import Conversation, Dog, Meetup, Message, Reaction, Comment, Post
 from .serializers import (
     ConversationSerializer,
     DogSerializer,
@@ -16,10 +16,24 @@ from .serializers import (
     MessageSerializer,
     ReactionSerializer,
     UserSerializer,
+    CommentSerializer,
+    PostSerializer,
+    EmbeddedUserSerializer,
 )
 
 
 class IsOwner(BasePermission):
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+
+        return request.user == obj.user
+
+
+class PostMaker(BasePermission):
     def has_permission(self, request, view):
         return True
 
@@ -107,3 +121,120 @@ class ReactionViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Reaction.objects.all().select_related("user")
+
+
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def get_queryset(self):
+        return (
+            Comment.objects.all()
+            .select_related("user", "post")
+            .prefetch_related("liked_by")
+        )
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied()
+        serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    def like(self, request, pk):
+        comment = self.get_object()
+        comment.liked_by.add(self.request.user)
+        comment.save()
+        return Response(status=201)
+
+
+class PostViewSet(ModelViewSet):
+    serializer_class = PostSerializer
+    permission_classes = [
+        IsAuthenticated,
+        PostMaker,
+    ]
+    parser_classes = [JSONParser, FileUploadParser]
+
+    def retrieve(self, request, pk):
+        post = (
+            Post.objects.filter(pk=pk)
+            .select_related("user", "dog")
+            .prefetch_related(
+                "liked_by", "comments", "comments__user", "comments__liked_by"
+            )
+        ).first()
+        serializer = PostSerializer(post, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def mine(self, request):
+        posts = (
+            Post.objects.filter(user=self.request.user)
+            .select_related("user", "dog")
+            .prefetch_related(
+                "liked_by", "comments", "comments__user", "comments__liked_by"
+            )
+            .order_by("-posted_at")
+        )
+        serializer = PostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def all(self, request):
+        posts = (
+            Post.objects.all()
+            .select_related("user", "dog")
+            .prefetch_related(
+                "liked_by", "comments", "comments__user", "comments__liked_by"
+            )
+            .order_by("-posted_at")
+        )
+        serializer = PostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"])
+    def image(self, request, pk, format=None):
+        if "file" not in request.data:
+            raise ParseError("Empty content")
+
+        file = request.data["file"]
+        post = self.get_object()
+
+        post.image.save(file.name, file, save=True)
+        return Response(status=201)
+
+    @action(detail=True, methods=["POST"])
+    def delete_image(self, request, pk, format=None):
+        queryset = Post.objects.all()
+        post = get_object_or_404(queryset, pk=pk)
+        post.image.delete(save=True)
+        return Response(status=204)
+
+    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    def like(self, request, pk):
+        post = self.get_object()
+        post.liked_by.add(self.request.user)
+        post.save()
+        return Response(status=201)
+
+    def get_parser_classes(self):
+        print(self.action)
+        if self.action == "image":
+            return [FileUploadParser]
+
+        return [JSONParser]
+
+    def get_queryset(self):
+        return (
+            Post.objects.all()
+            .select_related("user", "dog")
+            .prefetch_related("liked_by", "comments", "comments__user")
+            .order_by("-posted_at")
+        )
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
