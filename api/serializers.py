@@ -50,19 +50,24 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         many=True, view_name="meetup_admin-detail", read_only=True
     )
 
+
     class Meta:
         model = User
         fields = [
             "username",
             "first_name",
             "last_name",
+            "last_name_is_public",
             "num_pets",
             "street_address",
+            "address_is_public",
             "city",
             "state",
             "created_at",
             "phone_num",
+            "phone_is_public",
             "birthdate",
+            "birthdate_is_public",
             "profile_picture",
             "dogs",
             "conversations",

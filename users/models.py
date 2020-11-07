@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.fields import BooleanField, NullBooleanField
 
 
 class User(AbstractUser):
@@ -7,10 +8,12 @@ class User(AbstractUser):
     first_name = models.CharField(null=True, blank=True, max_length=63)
 
     last_name = models.CharField(null=True, blank=True, max_length=63)
+    last_name_is_public = models.BooleanField(null=False, blank=False, default=False)
 
     num_pets = models.IntegerField(null=True, blank=True, default=0)
 
     street_address = models.CharField(null=True, blank=True, max_length=255)
+    address_is_public = models.BooleanField(null=False, blank=False, default=False)
 
     city = models.CharField(null=True, blank=True, max_length=63)
 
@@ -19,8 +22,10 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     phone_num = models.IntegerField(null=True, blank=True)
+    phone_is_public = models.BooleanField(null=False, blank=False, default=False)
 
     birthdate = models.DateField(null=True, blank=True)
+    birthdate_is_public = models.BooleanField(null=False, blank=False, default=False)
     # should have a minimum age/maximum date such that min. age = 18
 
     profile_picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
