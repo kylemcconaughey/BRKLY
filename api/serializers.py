@@ -3,7 +3,15 @@ from users.models import User
 from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment
 
 
+class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "url"]
+
+
 class DogSerializer(serializers.ModelSerializer):
+    owner = EmbeddedUserSerializer()
+
     class Meta:
         model = Dog
         fields = [
@@ -22,38 +30,80 @@ class DogSerializer(serializers.ModelSerializer):
         ]
 
 
+class EmbeddedDogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dog
+        fields = ["name", "url", "picture"]
+
+
+class EmbeddedMessageSerializer(serializers.ModelSerializer):
+    sender = EmbeddedUserSerializer()
+    reactions = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Message
+        fields = [
+            "sender",
+            "time_sent",
+            "body",
+            "reactions",
+            "image",
+            "read_by",
+        ]
+
+
 class ConversationSerializer(serializers.ModelSerializer):
+    messages = EmbeddedMessageSerializer(many=True)
+    members = EmbeddedUserSerializer(many=True)
+    admin = EmbeddedUserSerializer()
+
     class Meta:
         model = Conversation
         fields = [
-            "members",
-            "created_at",
             "convo_name",
+            "url",
+            "id",
+            "members",
+            "messages",
+            "created_at",
             "admin",
         ]
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    dogs = serializers.HyperlinkedRelatedField(
-        many=True, view_name="dog-detail", read_only=True
-    )
-    conversations = serializers.HyperlinkedRelatedField(
-        many=True, view_name="conversation-detail", read_only=True
-    )
-    admin_conversations = serializers.HyperlinkedRelatedField(
-        many=True, view_name="admin_conversation-detail", read_only=True
-    )
-    meetups = serializers.HyperlinkedRelatedField(
-        many=True, view_name="meetup-detail", read_only=True
-    )
-    meetups_admin = serializers.HyperlinkedRelatedField(
-        many=True, view_name="meetup_admin-detail", read_only=True
-    )
+class EmbeddedConversationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Conversation
+        fields = [
+            "url",
+            "id",
+            "convo_name",
+            "created_at",
+        ]
 
+
+class EmbeddedMeetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meetup
+        fields = [
+            "url",
+            "id",
+            "start_time",
+            "end_time",
+            "location",
+        ]
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    dogs = EmbeddedDogSerializer(many=True)
+    conversations = EmbeddedConversationSerializer(many=True)
+    adminconversations = EmbeddedConversationSerializer(many=True)
+    meetups = EmbeddedMeetupSerializer(many=True)
+    meetupsadmin = EmbeddedMeetupSerializer(many=True)
 
     class Meta:
         model = User
         fields = [
+            "url",
             "username",
             "first_name",
             "last_name",
@@ -71,9 +121,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "profile_picture",
             "dogs",
             "conversations",
-            "admin_conversations",
+            "adminconversations",
             "meetups",
-            "meetups_admin",
+            "meetupsadmin",
         ]
 
 
@@ -154,7 +204,3 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # For use when displaying sub-lists of users, in which you don't want to see all their information
-class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username", "id", "url"]

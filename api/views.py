@@ -68,17 +68,17 @@ class UserViewSet(ModelViewSet):
     def get_queryset(self):
         return User.objects.all()
 
-    def retrieve(self, request, pk):
-        user = User.objects.filter(pk=pk).prefetch_related(
-            "dogs",
-            "conversations",
-            "admin_conversations",
-            "messages_sent",
-            "meetups",
-            "meetups_admin",
-        )
-        serializer = UserSerializer(user, context={"request": request})
-        return Response(serializer.data)
+    # def retrieve(self, request, pk):
+    #     user = User.objects.filter(pk=pk).prefetch_related(
+    #         "dogs",
+    #         "conversations",
+    #         "adminconversations",
+    #         "messages_sent",
+    #         "meetups",
+    #         "meetupsadmin",
+    #     )
+    #     serializer = UserSerializer(user, context={"request": request})
+    #     return Response(serializer.data)
 
 
 class ConversationViewSet(ModelViewSet):
@@ -88,7 +88,7 @@ class ConversationViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Conversation.objects.all()
-            .prefetch_related("members")
+            .prefetch_related("members", "messages")
             .select_related("admin")
         )
 
