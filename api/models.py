@@ -113,7 +113,9 @@ class Message(models.Model):
 
     body = models.TextField(null=True, blank=True)
 
-    reactions = models.ManyToManyField(to="Reaction", related_name="message")
+    reactions = models.ManyToManyField(
+        to="Reaction", related_name="message", null=True, blank=True
+    )
 
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
