@@ -77,7 +77,7 @@ class Conversation(models.Model):
     )
 
     admin = models.ForeignKey(
-        to=User, on_delete=models.CASCADE, related_name="admin_conversations"
+        to=User, on_delete=models.CASCADE, related_name="adminconversations"
     )
 
     def preview(self):
@@ -114,20 +114,18 @@ class Message(models.Model):
     body = models.TextField(null=True, blank=True)
 
     reactions = models.ManyToManyField(
-        to="Reaction", related_name="message", null=True, blank=True
+        to="Reaction", related_name="message", blank=True
     )
 
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
-    read_by = models.ManyToManyField(
-        to=User, related_name="messages_read", null=True, blank=True
-    )
+    read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
 
 class Meetup(models.Model):
     admin = models.ForeignKey(
-        to=User, on_delete=models.CASCADE, related_name="meetups_admin"
+        to=User, on_delete=models.CASCADE, related_name="meetupsadmin"
     )
 
     # invited = models.ManyToManyField(to=User, related_name="meetup_invites")

@@ -88,7 +88,7 @@ class ConversationViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Conversation.objects.all()
-            .prefetch_related("members")
+            .prefetch_related("members", "messages")
             .select_related("admin")
         )
 
