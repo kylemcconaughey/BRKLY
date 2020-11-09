@@ -3,7 +3,15 @@ from users.models import User
 from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment
 
 
+class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "url"]
+
+
 class DogSerializer(serializers.ModelSerializer):
+    owner = EmbeddedUserSerializer()
+
     class Meta:
         model = Dog
         fields = [
@@ -28,21 +36,36 @@ class EmbeddedDogSerializer(serializers.ModelSerializer):
         fields = ["name", "url", "picture"]
 
 
+class EmbeddedMessageSerializer(serializers.ModelSerializer):
+    sender = EmbeddedUserSerializer()
+    reactions = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Message
+        fields = [
+            "sender",
+            "time_sent",
+            "body",
+            "reactions",
+            "image",
+            "read_by",
+        ]
+
+
 class ConversationSerializer(serializers.ModelSerializer):
-    messages = serializers.SlugRelatedField(
-        slug_field="body", many=True, read_only=True
-    )
-    members = serializers.StringRelatedField(many=True, read_only=True)
+    messages = EmbeddedMessageSerializer(many=True)
+    members = EmbeddedUserSerializer(many=True)
+    admin = EmbeddedUserSerializer()
 
     class Meta:
         model = Conversation
         fields = [
+            "convo_name",
             "url",
             "id",
             "members",
             "messages",
             "created_at",
-            "convo_name",
             "admin",
         ]
 
@@ -80,6 +103,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = [
+            "url",
             "username",
             "first_name",
             "last_name",
@@ -180,7 +204,3 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # For use when displaying sub-lists of users, in which you don't want to see all their information
-class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username", "id", "url"]
