@@ -27,6 +27,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         model = Conversation
         fields = [
             "members",
+            "messages",
             "created_at",
             "convo_name",
             "admin",
