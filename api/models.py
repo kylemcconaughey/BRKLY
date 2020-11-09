@@ -77,7 +77,7 @@ class Conversation(models.Model):
     )
 
     admin = models.ForeignKey(
-        to=User, on_delete=models.CASCADE, related_name="admin_conversations"
+        to=User, on_delete=models.CASCADE, related_name="adminconversations"
     )
 
     def preview(self):
@@ -125,7 +125,7 @@ class Message(models.Model):
 
 class Meetup(models.Model):
     admin = models.ForeignKey(
-        to=User, on_delete=models.CASCADE, related_name="meetups_admin"
+        to=User, on_delete=models.CASCADE, related_name="meetupsadmin"
     )
 
     # invited = models.ManyToManyField(to=User, related_name="meetup_invites")
