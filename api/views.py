@@ -72,10 +72,10 @@ class UserViewSet(ModelViewSet):
         user = User.objects.filter(pk=pk).prefetch_related(
             "dogs",
             "conversations",
-            "admin_conversations",
+            "adminconversations",
             "messages_sent",
             "meetups",
-            "meetups_admin",
+            "meetupsadmin",
         )
         serializer = UserSerializer(user, context={"request": request})
         return Response(serializer.data)
