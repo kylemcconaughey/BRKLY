@@ -120,7 +120,9 @@ class Message(models.Model):
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
-    read_by = models.ManyToManyField(to=User, related_name="messages_read")
+    read_by = models.ManyToManyField(
+        to=User, related_name="messages_read", null=True, blank=True
+    )
 
 
 class Meetup(models.Model):
