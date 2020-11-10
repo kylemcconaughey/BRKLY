@@ -99,6 +99,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     adminconversations = EmbeddedConversationSerializer(many=True)
     meetups = EmbeddedMeetupSerializer(many=True)
     meetupsadmin = EmbeddedMeetupSerializer(many=True)
+    followers = EmbeddedUserSerializer(many=True)
 
     class Meta:
         model = User
@@ -125,6 +126,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "adminconversations",
             "meetups",
             "meetupsadmin",
+            "followers",
         ]
 
 
