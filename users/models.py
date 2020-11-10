@@ -31,4 +31,6 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
-    # username? email?
+    followers = models.ManyToManyField(
+        "self", related_name="following", symmetrical=False
+    )

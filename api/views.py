@@ -64,21 +64,49 @@ class DogViewSet(ModelViewSet):
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    search_fields = ["username", "first_name", "last_name", "email", "dogs__name"]
 
     def get_queryset(self):
-        return User.objects.all()
+        return User.objects.all().prefetch_related(
+            "dogs",
+            "followers",
+            "conversations",
+            "meetups",
+            "adminconversations",
+            "meetupsadmin",
+        )
 
-    # def retrieve(self, request, pk):
-    #     user = User.objects.filter(pk=pk).prefetch_related(
-    #         "dogs",
-    #         "conversations",
-    #         "adminconversations",
-    #         "messages_sent",
-    #         "meetups",
-    #         "meetupsadmin",
-    #     )
-    #     serializer = UserSerializer(user, context={"request": request})
-    #     return Response(serializer.data)
+    @action(detail=True, methods=["POST"])
+    def follow(self, request, pk):
+        person = User.objects.filter(pk=pk).first()
+        person.followers.add(self.request.user)
+        serializer = UserSerializer(person, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"])
+    def unfollow(self, request, pk):
+        person = User.objects.filter(pk=pk).first()
+        person.followers.remove(self.request.user)
+        person.save()
+        return Response(status=204)
+
+    def retrieve(self, request, pk):
+        user = (
+            User.objects.filter(pk=pk)
+            .prefetch_related(
+                "dogs",
+                "conversations",
+                "meetups",
+                "adminconversations",
+                "meetupsadmin",
+                "posts",
+                "comments",
+                "followers",
+            )
+            .first()
+        )
+        serializer = UserSerializer(user, context={"request": request})
+        return Response(serializer.data)
 
 
 class ConversationViewSet(ModelViewSet):
