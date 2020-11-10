@@ -16,6 +16,7 @@ api_router.register("meetups", api_views.MeetupViewSet, basename="meetup")
 api_router.register("reactions", api_views.ReactionViewSet, basename="reaction")
 api_router.register("posts", api_views.PostViewSet, basename="post")
 api_router.register("comments", api_views.CommentViewSet, basename="comment")
+api_router.register("requests", api_views.RequestViewSet, basename="request")
 
 
 urlpatterns = [

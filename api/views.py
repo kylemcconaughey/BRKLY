@@ -107,6 +107,8 @@ class UserViewSet(ModelViewSet):
             "adminconversations",
             "meetupsadmin",
             "friends",
+            "requests_sent",
+            "requests_received",
         )
 
     @action(detail=False, methods=["GET"])
@@ -142,6 +144,17 @@ class UserViewSet(ModelViewSet):
         Request.objects.create(proposing=proposer, receiving=receiver, accepted=False)
         return Response(status=200)
 
+    @action(detail=True, methods=["POST"])
+    def unfriend(self, request, pk):
+        them = User.objects.filter(pk=pk)
+        friend_request = Request.objects.get(
+            (Q(proposing=self.request.user) & Q(receiving=them))
+            | (Q(proposing=them) & Q(receiving=self.request.user))
+        )
+        self.request.user.friends.remove(them)
+        friend_request.delete()
+        return Response(status=204)
+
     # @action(detail=True, methods=['POST'])
     # def accept(self, request, pk):
     #     request = get_object_or_404(Request, Q(proposing))
@@ -159,6 +172,8 @@ class UserViewSet(ModelViewSet):
                 "comments",
                 "followers",
                 "friends",
+                "requests_sent",
+                "requests_received",
             )
             .first()
         )
@@ -176,6 +191,24 @@ class ConversationViewSet(ModelViewSet):
             .prefetch_related("members", "messages")
             .select_related("admin")
         )
+
+
+class RequestViewSet(ModelViewSet):
+    serializer_class = RequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Request.objects.all().select_related("proposing", "receiving")
+
+    @action(detail=True, methods=["POST"])
+    def accept(self, request, pk):
+        friend_request = self.get_object()
+        if self.request.user == friend_request.receiving:
+            self.request.user.friends.add(friend_request.proposing)
+            friend_request.accepted = True
+            friend_request.save()
+            return Response(201)
+        raise PermissionDenied()
 
 
 class MessageViewSet(ModelViewSet):
@@ -269,7 +302,11 @@ class PostViewSet(ModelViewSet):
     @action(detail=False)
     def all(self, request):
         posts = (
-            Post.objects.all()
+            Post.objects.filter(
+                Q(user__friends=self.request.user)
+                | Q(user__followers=self.request.user)
+                | Q(user=self.request.user)
+            )
             .select_related("user", "dog")
             .prefetch_related(
                 "liked_by", "comments", "comments__user", "comments__liked_by"

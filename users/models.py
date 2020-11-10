@@ -32,7 +32,9 @@ class User(AbstractUser):
     # needs media routes set up
 
     followers = models.ManyToManyField(
-        "self", related_name="following", symmetrical=False
+        "self", related_name="following", symmetrical=False, blank=True
     )
 
-    friends = models.ManyToManyField("self", related_name="friends", symmetrical=True)
+    friends = models.ManyToManyField(
+        "self", related_name="friends", symmetrical=True, blank=True
+    )

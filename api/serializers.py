@@ -6,7 +6,7 @@ from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment,
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "url"]
+        fields = ["username", "url", "id"]
 
 
 class DogSerializer(serializers.ModelSerializer):
@@ -100,6 +100,8 @@ class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = [
+            "url",
+            "id",
             "proposing",
             "receiving",
             "accepted",
@@ -172,17 +174,13 @@ class ReactionSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
-    sender_username = serializers.StringRelatedField(read_only=True)
-    sender = serializers.HyperlinkedRelatedField(
-        view_name="user-detail", read_only=True
-    )
+    sender = EmbeddedUserSerializer()
     reactions = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Message
         fields = [
             "sender",
-            "sender_username",
             "conversation",
             "time_sent",
             "body",
@@ -193,6 +191,9 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MeetupSerializer(serializers.ModelSerializer):
+    admin = EmbeddedUserSerializer()
+    attending = EmbeddedUserSerializer(many=True)
+
     class Meta:
         model = Meetup
         fields = [
@@ -205,26 +206,24 @@ class MeetupSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = EmbeddedUserSerializer()
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Comment
-        fields = ["user", "id", "url", "body", "posted_at", "post", "liked_by"]
+        fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = EmbeddedUserSerializer()
     comments = CommentSerializer(many=True, read_only=True)
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
-    user_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Post
         fields = [
             "user",
             "dog",
-            "user_id",
             "body",
             "image",
             "posted_at",
