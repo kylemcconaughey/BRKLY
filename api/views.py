@@ -75,7 +75,7 @@ class DogViewSet(ModelViewSet):
             Q(name__icontains=search_term)
             | Q(owner__username__icontains=search_term)
             | Q(owner__first_name__icontains=search_term)
-        )
+        ).distinct("id")
         serializer = DogSerializer(dogs, context={"request": request}, many=True)
         return Response(serializer.data)
 
@@ -90,7 +90,7 @@ class DogViewSet(ModelViewSet):
             | Q(group_size__icontains=search_term)
             | Q(vaccinated__icontains=search_term)
             | Q(kid_friendly__icontains=search_term)
-        )
+        ).distinct("id")
         serializer = DogSerializer(dogs, context={"request": request}, many=True)
         return Response(serializer.data)
 
@@ -118,7 +118,7 @@ class UserViewSet(ModelViewSet):
             | Q(first_name__icontains=search_term)
             | Q(last_name__icontains=search_term)
             | Q(dogs__name__icontains=search_term)
-        )
+        ).distinct("id")
         serializer = UserSerializer(users, context={"request": request}, many=True)
         return Response(serializer.data)
 
