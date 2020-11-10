@@ -115,6 +115,7 @@ class EmbeddedRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = [
+            "url",
             "proposing",
             "receiving",
             "accepted",
