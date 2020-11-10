@@ -203,6 +203,8 @@ class Post(models.Model):
 
     liked_by = models.ManyToManyField(to=User, related_name="liked_posts", blank=True)
 
+    reactions = models.ManyToManyField(to="Reaction", related_name="post", blank=True)
+
     def __str__(self):
         return f"{self.id}"
 

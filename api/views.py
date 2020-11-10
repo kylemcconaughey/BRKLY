@@ -7,6 +7,14 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
+from django.contrib.postgres.search import SearchVector
+from django.db.models import Q
+
+
+"""
+GET /users/search/?q=<search_term>      searches for 'search_term' across username, first_name, last_name, and the names of people's dogs (but still returns the person, not the dog)
+"""
+
 
 from .models import Conversation, Dog, Meetup, Message, Reaction, Comment, Post
 from .serializers import (
@@ -60,6 +68,32 @@ class DogViewSet(ModelViewSet):
             return serializer.save(owner=self.request.user)
         raise PermissionDenied()
 
+    @action(detail=False, methods=["GET"])
+    def name_search(self, request):
+        search_term = request.GET.get("q")
+        dogs = Dog.objects.filter(
+            Q(name__icontains=search_term)
+            | Q(owner__username__icontains=search_term)
+            | Q(owner__first_name__icontains=search_term)
+        ).distinct("id")
+        serializer = DogSerializer(dogs, context={"request": request}, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["GET"])
+    def tag_search(self, request):
+        search_term = request.GET.get("q")
+        dogs = Dog.objects.filter(
+            Q(breed__icontains=search_term)
+            | Q(size__icontains=search_term)
+            | Q(energy__icontains=search_term)
+            | Q(temper__icontains=search_term)
+            | Q(group_size__icontains=search_term)
+            | Q(vaccinated__icontains=search_term)
+            | Q(kid_friendly__icontains=search_term)
+        ).distinct("id")
+        serializer = DogSerializer(dogs, context={"request": request}, many=True)
+        return Response(serializer.data)
+
 
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
@@ -75,6 +109,18 @@ class UserViewSet(ModelViewSet):
             "adminconversations",
             "meetupsadmin",
         )
+
+    @action(detail=False, methods=["GET"])
+    def search(self, request):
+        search_term = request.GET.get("q")
+        users = User.objects.filter(
+            Q(username__icontains=search_term)
+            | Q(first_name__icontains=search_term)
+            | Q(last_name__icontains=search_term)
+            | Q(dogs__name__icontains=search_term)
+        ).distinct("id")
+        serializer = UserSerializer(users, context={"request": request}, many=True)
+        return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
     def follow(self, request, pk):
