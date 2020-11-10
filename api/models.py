@@ -224,3 +224,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.body}"
+
+
+class Request(models.Model):
+    proposing = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="requests_sent"
+    )
+
+    receiving = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="requests_received"
+    )
+
+    accepted = models.BooleanField(blank=False, null=False, default=False)

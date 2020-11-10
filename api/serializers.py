@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from users.models import User
-from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment
+from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -93,6 +93,32 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
         ]
 
 
+class RequestSerializer(serializers.ModelSerializer):
+    proposing = EmbeddedUserSerializer()
+    receiving = EmbeddedUserSerializer()
+
+    class Meta:
+        model = Request
+        fields = [
+            "proposing",
+            "receiving",
+            "accepted",
+        ]
+
+
+class EmbeddedRequestSerializer(serializers.ModelSerializer):
+    proposing = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    receiving = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
+    class Meta:
+        model = Request
+        fields = [
+            "proposing",
+            "receiving",
+            "accepted",
+        ]
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     dogs = EmbeddedDogSerializer(many=True)
     conversations = EmbeddedConversationSerializer(many=True)
@@ -100,6 +126,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     meetups = EmbeddedMeetupSerializer(many=True)
     meetupsadmin = EmbeddedMeetupSerializer(many=True)
     followers = EmbeddedUserSerializer(many=True)
+    friends = EmbeddedUserSerializer(many=True)
+    requests_sent = EmbeddedRequestSerializer(many=True)
+    requests_received = EmbeddedRequestSerializer(many=True)
 
     class Meta:
         model = User
@@ -127,6 +156,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "meetups",
             "meetupsadmin",
             "followers",
+            "friends",
+            "requests_received",
+            "requests_sent",
         ]
 
 

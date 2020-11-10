@@ -34,3 +34,5 @@ class User(AbstractUser):
     followers = models.ManyToManyField(
         "self", related_name="following", symmetrical=False
     )
+
+    friends = models.ManyToManyField("self", related_name="friends", symmetrical=True)

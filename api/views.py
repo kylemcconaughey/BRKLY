@@ -1,4 +1,6 @@
+from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -7,27 +9,23 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
-from django.contrib.postgres.search import SearchVector
-from django.db.models import Q
-
+from .models import Comment, Conversation, Dog, Meetup, Message, Post, Reaction, Request
+from .serializers import (
+    CommentSerializer,
+    ConversationSerializer,
+    DogSerializer,
+    EmbeddedUserSerializer,
+    MeetupSerializer,
+    MessageSerializer,
+    PostSerializer,
+    ReactionSerializer,
+    UserSerializer,
+    RequestSerializer,
+)
 
 """
 GET /users/search/?q=<search_term>      searches for 'search_term' across username, first_name, last_name, and the names of people's dogs (but still returns the person, not the dog)
 """
-
-
-from .models import Conversation, Dog, Meetup, Message, Reaction, Comment, Post
-from .serializers import (
-    ConversationSerializer,
-    DogSerializer,
-    MeetupSerializer,
-    MessageSerializer,
-    ReactionSerializer,
-    UserSerializer,
-    CommentSerializer,
-    PostSerializer,
-    EmbeddedUserSerializer,
-)
 
 
 class IsOwner(BasePermission):
@@ -108,6 +106,7 @@ class UserViewSet(ModelViewSet):
             "meetups",
             "adminconversations",
             "meetupsadmin",
+            "friends",
         )
 
     @action(detail=False, methods=["GET"])
@@ -124,17 +123,28 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=True, methods=["POST"])
     def follow(self, request, pk):
-        person = User.objects.filter(pk=pk).first()
+        person = User.objects.get(pk=pk)
         person.followers.add(self.request.user)
         serializer = UserSerializer(person, context={"request": request})
         return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
     def unfollow(self, request, pk):
-        person = User.objects.filter(pk=pk).first()
+        person = User.objects.get(pk=pk)
         person.followers.remove(self.request.user)
         person.save()
         return Response(status=204)
+
+    @action(detail=True, methods=["POST"])
+    def request(self, request, pk):
+        proposer = self.request.user
+        receiver = User.objects.get(pk=pk)
+        Request.objects.create(proposing=proposer, receiving=receiver, accepted=False)
+        return Response(status=200)
+
+    # @action(detail=True, methods=['POST'])
+    # def accept(self, request, pk):
+    #     request = get_object_or_404(Request, Q(proposing))
 
     def retrieve(self, request, pk):
         user = (
@@ -148,6 +158,7 @@ class UserViewSet(ModelViewSet):
                 "posts",
                 "comments",
                 "followers",
+                "friends",
             )
             .first()
         )
