@@ -64,6 +64,7 @@ class DogViewSet(ModelViewSet):
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    search_fields = ["username", "first_name", "last_name", "email", "dogs__name"]
 
     def get_queryset(self):
         return User.objects.all()
