@@ -72,7 +72,9 @@ class DogViewSet(ModelViewSet):
     def name_search(self, request):
         search_term = request.GET.get("q")
         dogs = Dog.objects.filter(
-            Q(name__icontains=search_term) | Q(owner__name__icontains=search_term)
+            Q(name__icontains=search_term)
+            | Q(owner__username__icontains=search_term)
+            | Q(owner__first_name__icontains=search_term)
         )
         serializer = DogSerializer(dogs, context={"request": request}, many=True)
         return Response(serializer.data)
