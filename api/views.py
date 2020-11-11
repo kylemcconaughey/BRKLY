@@ -50,6 +50,17 @@ class PostMaker(BasePermission):
         return request.user == obj.user
 
 
+class IsSelf(BasePermission):
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, usr):
+        if request.method in SAFE_METHODS:
+            return True
+
+        return request.user == usr
+
+
 class DogViewSet(ModelViewSet):
     serializer_class = DogSerializer
     permission_classes = [
@@ -95,8 +106,7 @@ class DogViewSet(ModelViewSet):
 
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-    search_fields = ["username", "first_name", "last_name", "email", "dogs__name"]
+    permission_classes = [IsAuthenticated, IsSelf]
 
     def get_queryset(self):
         return (
