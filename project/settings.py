@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Project-specific
     "users",
     "api",
+    "maps",
 ]
 
 MIDDLEWARE = [

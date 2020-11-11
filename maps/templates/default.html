@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Brkly Map</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+  </head>
+  <body>
+   <h1>🐾 Bark Map 🐾</h1>
+   <div id='map' width="100%" style='height:400px'></div>
+   <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY2xpbnRqb3JkYW4iLCJhIjoiY2toY2QxZjRyMHlvZTJxazR3ODQ2NGk5MCJ9.NPWz4oPLlUQI5JDUanIpcA';
+    // move token to env/settings
+    var map = new mapboxgl.Map({
+     container: 'map',
+     style: 'mapbox://styles/mapbox/satellite-streets-v10',
+     center: [-78.6382, 35.7796],
+    //  1st longitude 2nd latitude
+    // ideally set center to current location
+     zoom: 9,
+     bearing: 180
+    });
+   </script>
+  </body>
+</html>
