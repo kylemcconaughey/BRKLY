@@ -248,8 +248,18 @@ class ConversationViewSet(ModelViewSet):
             .select_related("admin")
             .annotate(
                 num_messages=Count("messages", distinct=True),
-                unread=Count(
-                    "messages", distinct=True, exclude=Q(read_by=self.request.user)
+                unread=(
+                    Count(
+                        "messages",
+                        distinct=True,
+                    )
+                )
+                - (
+                    Count(
+                        "messages",
+                        filter=Q(messages__read_by=self.request.user),
+                        distinct=True,
+                    )
                 ),
             )
         )
