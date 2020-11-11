@@ -17,6 +17,7 @@ class DogSerializer(serializers.ModelSerializer):
         model = Dog
         fields = [
             "name",
+            "url",
             "owner",
             "breed",
             "picture",
