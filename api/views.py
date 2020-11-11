@@ -126,16 +126,18 @@ class UserViewSet(ModelViewSet):
                 num_followers=Count("followers", distinct=True),
                 num_conversations=Count("conversations", distinct=True),
                 num_friends=Count("friends", distinct=True),
-                unread_messages=Count(
-                    "conversations__messages",
-                    exclude=Q(conversations__messages__read_by=self.request.user),
-                    distinct=True,
-                ),
                 friend_requests=Count(
                     "requests_received",
                     filter=Q(requests_received__accepted=False),
                     distinct=True,
                 ),
+                unread_messages=(
+                    Count(
+                        "conversations__messages",
+                        distinct=True,
+                    )
+                )
+                - (Count("messages_read", distinct=True)),
             )
         )
 
@@ -203,16 +205,18 @@ class UserViewSet(ModelViewSet):
                 num_followers=Count("followers", distinct=True),
                 num_conversations=Count("conversations", distinct=True),
                 num_friends=Count("friends", distinct=True),
-                unread_messages=Count(
-                    "conversations__messages",
-                    exclude=Q(read_by=self.request.user),
-                    distinct=True,
-                ),
                 friend_requests=Count(
                     "requests_received",
                     filter=Q(requests_received__accepted=False),
                     distinct=True,
                 ),
+                unread_messages=(
+                    Count(
+                        "conversations__messages",
+                        distinct=True,
+                    )
+                )
+                - (Count("messages_read", distinct=True)),
             )
             .first()
         )

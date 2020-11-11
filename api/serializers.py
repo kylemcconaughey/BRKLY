@@ -40,6 +40,9 @@ class EmbeddedDogSerializer(serializers.ModelSerializer):
 class EmbeddedMessageSerializer(serializers.ModelSerializer):
     sender = EmbeddedUserSerializer()
     reactions = serializers.StringRelatedField(many=True, read_only=True)
+    read_by = serializers.SlugRelatedField(
+        slug_field="username", read_only=True, many=True
+    )
 
     class Meta:
         model = Message
