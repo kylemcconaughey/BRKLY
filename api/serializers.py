@@ -12,6 +12,7 @@ class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
 
 class DogSerializer(serializers.ModelSerializer):
     owner = EmbeddedUserSerializer()
+    num_posts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Dog
@@ -29,6 +30,7 @@ class DogSerializer(serializers.ModelSerializer):
             "group_size",
             "vaccinated",
             "kid_friendly",
+            "num_posts",
         ]
 
 
@@ -62,6 +64,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     messages = EmbeddedMessageSerializer(many=True)
     members = EmbeddedUserSerializer(many=True)
     admin = EmbeddedUserSerializer()
+    num_messages = serializers.IntegerField(read_only=True)
+    unread = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Conversation
@@ -73,6 +77,8 @@ class ConversationSerializer(serializers.ModelSerializer):
             "messages",
             "created_at",
             "admin",
+            "num_messages",
+            "unread",
         ]
 
 

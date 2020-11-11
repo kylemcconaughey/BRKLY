@@ -72,6 +72,19 @@ class DogViewSet(ModelViewSet):
     def get_queryset(self):
         return Dog.objects.all().select_related("owner").order_by("-created_at")
 
+    def retrieve(self, request, pk):
+        dog = (
+            (
+                Dog.objects.filter(pk=pk)
+                .select_related("owner")
+                .prefetch_related("posts")
+            )
+            .annotate(num_posts=Count("posts", distinct=True))
+            .first()
+        )
+        serializer = DogSerializer(dog, context={"request": request})
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
             return serializer.save(owner=self.request.user)
@@ -233,7 +246,38 @@ class ConversationViewSet(ModelViewSet):
             Conversation.objects.all()
             .prefetch_related("members", "messages")
             .select_related("admin")
+            .annotate(
+                num_messages=Count("messages", distinct=True),
+                unread=Count(
+                    "messages", distinct=True, exclude=Q(read_by=self.request.user)
+                ),
+            )
         )
+
+    def retrieve(self, request, pk):
+        convo = (
+            Conversation.objects.filter(pk=pk)
+            .select_related("admin")
+            .prefetch_related("members", "messages")
+            .annotate(
+                num_messages=Count("messages", distinct=True),
+                unread=(
+                    Count(
+                        "messages",
+                        distinct=True,
+                    )
+                )
+                - (
+                    Count(
+                        "messages",
+                        filter=Q(messages__read_by=self.request.user),
+                        distinct=True,
+                    )
+                ),
+            )
+        ).first()
+        serializer = ConversationSerializer(convo, context={"request": request})
+        return Response(serializer.data)
 
 
 class RequestViewSet(ModelViewSet):
