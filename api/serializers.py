@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from users.models import User
 from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
+from django.db.models import Q, Count
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,6 +44,7 @@ class EmbeddedMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = [
+            "url",
             "sender",
             "time_sent",
             "body",
@@ -132,6 +134,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     friends = EmbeddedUserSerializer(many=True)
     requests_sent = EmbeddedRequestSerializer(many=True)
     requests_received = EmbeddedRequestSerializer(many=True)
+    num_followers = serializers.IntegerField()
+    num_conversations = serializers.IntegerField()
+    num_friends = serializers.IntegerField()
+    unread_messages = serializers.IntegerField()
+    friend_requests = serializers.IntegerField()
 
     class Meta:
         model = User
@@ -162,6 +169,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "friends",
             "requests_received",
             "requests_sent",
+            "num_followers",
+            "num_conversations",
+            "num_friends",
+            "unread_messages",
+            "friend_requests",
         ]
 
 
@@ -183,6 +195,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             "sender",
             "conversation",
+            "url",
             "time_sent",
             "body",
             "reactions",

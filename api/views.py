@@ -1,6 +1,6 @@
 from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Count, F
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -99,16 +99,34 @@ class UserViewSet(ModelViewSet):
     search_fields = ["username", "first_name", "last_name", "email", "dogs__name"]
 
     def get_queryset(self):
-        return User.objects.all().prefetch_related(
-            "dogs",
-            "followers",
-            "conversations",
-            "meetups",
-            "adminconversations",
-            "meetupsadmin",
-            "friends",
-            "requests_sent",
-            "requests_received",
+        return (
+            User.objects.all()
+            .prefetch_related(
+                "dogs",
+                "followers",
+                "conversations",
+                "meetups",
+                "adminconversations",
+                "meetupsadmin",
+                "friends",
+                "requests_sent",
+                "requests_received",
+            )
+            .annotate(
+                num_followers=Count("followers", distinct=True),
+                num_conversations=Count("conversations", distinct=True),
+                num_friends=Count("friends", distinct=True),
+                unread_messages=Count(
+                    "conversations__messages",
+                    exclude=Q(conversations__messages__read_by=self.request.user),
+                    distinct=True,
+                ),
+                friend_requests=Count(
+                    "requests_received",
+                    filter=Q(requests_received__accepted=False),
+                    distinct=True,
+                ),
+            )
         )
 
     @action(detail=False, methods=["GET"])
@@ -155,10 +173,6 @@ class UserViewSet(ModelViewSet):
         friend_request.delete()
         return Response(status=204)
 
-    # @action(detail=True, methods=['POST'])
-    # def accept(self, request, pk):
-    #     request = get_object_or_404(Request, Q(proposing))
-
     def retrieve(self, request, pk):
         user = (
             User.objects.filter(pk=pk)
@@ -174,6 +188,21 @@ class UserViewSet(ModelViewSet):
                 "friends",
                 "requests_sent",
                 "requests_received",
+            )
+            .annotate(
+                num_followers=Count("followers", distinct=True),
+                num_conversations=Count("conversations", distinct=True),
+                num_friends=Count("friends", distinct=True),
+                unread_messages=Count(
+                    "conversations__messages",
+                    exclude=Q(read_by=self.request.user),
+                    distinct=True,
+                ),
+                friend_requests=Count(
+                    "requests_received",
+                    filter=Q(requests_received__accepted=False),
+                    distinct=True,
+                ),
             )
             .first()
         )
@@ -210,6 +239,14 @@ class RequestViewSet(ModelViewSet):
             return Response(201)
         raise PermissionDenied()
 
+    @action(detail=True, methods=["POST"])
+    def deny(self, request, pk):
+        friend_request = self.get_object()
+        if self.request.user == friend_request.receiving:
+            friend_request.delete()
+            return Response(204)
+        raise PermissionDenied()
+
 
 class MessageViewSet(ModelViewSet):
     serializer_class = MessageSerializer
@@ -221,6 +258,18 @@ class MessageViewSet(ModelViewSet):
             .select_related("sender", "conversation")
             .prefetch_related("reactions", "read_by")
         )
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied()
+        serializer.save(sender=self.request.user, read_by=self.request.user)
+
+    @action(detail=True, methods=["POST"])
+    def read(self, request, pk):
+        message = Message.objects.filter(pk=pk).first()
+        message.read_by.add(self.request.user)
+        message.save()
+        return Response(201)
 
 
 class MeetupViewSet(ModelViewSet):
