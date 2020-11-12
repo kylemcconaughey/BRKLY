@@ -2,6 +2,7 @@ from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Count, F
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, JSONParser
@@ -9,10 +10,10 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
-from .models import Comment, Conversation, Dog, Meetup, Message, Post, Reaction, Request
+from .models import Comment, Conversation, DiscussionBoard, Dog, Meetup, Message, Post, Reaction, Request
 from .serializers import (
     CommentSerializer,
-    ConversationSerializer,
+    ConversationSerializer, DiscussionBoardSerializer,
     DogSerializer,
     EmbeddedUserSerializer,
     MeetupSerializer,
@@ -477,3 +478,7 @@ class PostViewSet(ModelViewSet):
         if self.request.user.is_authenticated:
             return serializer.save(user=self.request.user)
         raise PermissionDenied()
+
+class DiscussionBoardViewSet(ModelViewSet):
+    serializer_class = DiscussionBoardSerializer
+    permission_classes = IsAuthenticated

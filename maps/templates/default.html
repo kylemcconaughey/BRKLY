@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
@@ -15,8 +15,8 @@
     // move token to env/settings
     var map = new mapboxgl.Map({
       container: 'map',
-      //  style: 'mapbox://styles/mapbox/satellite-streets-v10',
-      style: 'mapbox://styles/mapbox/streets-v10',
+      style: 'mapbox://styles/mapbox/satellite-streets-v10',
+      // style: 'mapbox://styles/mapbox/streets-v10',
       center: [-78.6382, 35.7796],
       //  1st longitude 2nd latitude
       // ideally set center to current location
@@ -26,4 +26,47 @@
   </script>
 </body>
 
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>BRKLY Maps</title>
+<h1>🐾 Bark Map 🐾</h1>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+<link
+rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
+type="text/css"
+/>
+<div id="map"></div>
+ 
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiY2xpbnRqb3JkYW4iLCJhIjoiY2toY2QxZjRyMHlvZTJxazR3ODQ2NGk5MCJ9.NPWz4oPLlUQI5JDUanIpcA';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v11',
+center: [-78.6382, 35.7796],
+zoom: 13
+});
+ 
+map.addControl(
+new MapboxDirections({
+accessToken: mapboxgl.accessToken
+}),
+'top-left'
+);
+</script>
+ 
+</body>
 </html>

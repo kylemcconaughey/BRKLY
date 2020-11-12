@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields import CharField
 from users.models import User
 
 # Create your models here.
@@ -236,3 +237,19 @@ class Request(models.Model):
     )
 
     accepted = models.BooleanField(blank=False, null=False, default=False)
+
+class DiscussionBoard(models.Model):
+    title = models.CharField(max_length=255, blank=False, null=False)
+
+    body = models.TextField(blank=False, null=False)
+    # max length required on charfield
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="discussion")
+
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    upvote = models.ManyToManyField(to=User, related_name="upvote", blank=True)
+    downvote = models.ManyToManyField(to=User, related_name="downvote", blank=True)
+
+    def __str__(self):
+        return f"{self.title}"

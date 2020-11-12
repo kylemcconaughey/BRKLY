@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Dog, Conversation, Message, Reaction, Meetup, Post, Comment, Request
+from .models import Dog, Conversation, Message, Reaction, Meetup, Post, Comment, Request, DiscussionBoard
 
 # Register your models here.
 
@@ -11,3 +11,4 @@ admin.site.register(Meetup)
 admin.site.register(Post)
 admin.site.register(Comment)
 admin.site.register(Request)
+admin.site.register(DiscussionBoard)
