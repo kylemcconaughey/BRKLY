@@ -169,7 +169,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "phone_is_public",
             "birthdate",
             "birthdate_is_public",
-            "profile_picture",
+            "picture",
             "dogs",
             "conversations",
             "adminconversations",
