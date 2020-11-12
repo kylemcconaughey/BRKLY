@@ -481,4 +481,7 @@ class PostViewSet(ModelViewSet):
 
 class DiscussionBoardViewSet(ModelViewSet):
     serializer_class = DiscussionBoardSerializer
-    permission_classes = IsAuthenticated
+    permission_class = IsAuthenticated
+
+    def get_queryset(self):
+        return DiscussionBoard.objects.all().order_by("-posted_at")

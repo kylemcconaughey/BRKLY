@@ -266,7 +266,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
-    class meta:
+    class Meta:
         model = DiscussionBoard
         fields = [
             'title',
