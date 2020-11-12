@@ -10,10 +10,21 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
-from .models import Comment, Conversation, DiscussionBoard, Dog, Meetup, Message, Post, Reaction, Request
+from .models import (
+    Comment,
+    Conversation,
+    DiscussionBoard,
+    Dog,
+    Meetup,
+    Message,
+    Post,
+    Reaction,
+    Request,
+)
 from .serializers import (
     CommentSerializer,
-    ConversationSerializer, DiscussionBoardSerializer,
+    ConversationSerializer,
+    DiscussionBoardSerializer,
     DogSerializer,
     EmbeddedUserSerializer,
     MeetupSerializer,
@@ -479,9 +490,18 @@ class PostViewSet(ModelViewSet):
             return serializer.save(user=self.request.user)
         raise PermissionDenied()
 
+
 class DiscussionBoardViewSet(ModelViewSet):
-    serializer_class = DiscussionBoardSerializer
+    serializer_classes = [DiscussionBoardSerializer]
     permission_class = IsAuthenticated
 
     def get_queryset(self):
-        return DiscussionBoard.objects.all().order_by("-posted_at")
+        return (
+            DiscussionBoard.objects.all()
+            .order_by("-posted_at")
+            .select_related("user")
+            .prefetch_related("upvotes", "downvotes")
+        ).annotate(
+            num_upvotes=Count("upvotes", distinct=True),
+            num_downvotes=Count("downvotes", distinct=True),
+        )

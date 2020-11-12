@@ -238,18 +238,23 @@ class Request(models.Model):
 
     accepted = models.BooleanField(blank=False, null=False, default=False)
 
+
 class DiscussionBoard(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
 
     body = models.TextField(blank=False, null=False)
-    # max length required on charfield
 
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="discussion")
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="discussion_boards"
+    )
 
     posted_at = models.DateTimeField(auto_now_add=True)
 
-    upvote = models.ManyToManyField(to=User, related_name="upvote", blank=True)
-    downvote = models.ManyToManyField(to=User, related_name="downvote", blank=True)
+    upvotes = models.ManyToManyField(to=User, related_name="upvoted_boards", blank=True)
+
+    downvotes = models.ManyToManyField(
+        to=User, related_name="downvoted_boards", blank=True
+    )
 
     def __str__(self):
         return f"{self.title}"
