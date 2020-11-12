@@ -242,6 +242,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     comments = CommentSerializer(many=True, read_only=True)
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
+    reactions = ReactionSerializer(many=True)
 
     class Meta:
         model = Post
@@ -258,6 +259,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "font_size",
             "liked_by",
             "comments",
+            "reactions",
         ]
 
 
