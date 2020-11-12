@@ -28,7 +28,7 @@ class User(AbstractUser):
     birthdate_is_public = models.BooleanField(null=False, blank=False, default=False)
     # should have a minimum age/maximum date such that min. age = 18
 
-    profile_picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
+    picture = models.ImageField(upload_to="post_images/", null=True, blank=True)
     # needs media routes set up
 
     followers = models.ManyToManyField(
