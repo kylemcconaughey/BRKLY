@@ -485,3 +485,8 @@ class DiscussionBoardViewSet(ModelViewSet):
 
     def get_queryset(self):
         return DiscussionBoard.objects.all().order_by("-posted_at")
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
