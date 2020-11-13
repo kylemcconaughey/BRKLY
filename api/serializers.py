@@ -188,11 +188,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ReactionSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
     class Meta:
         model = Reaction
         fields = [
             "reaction",
             "user",
+            "url",
         ]
 
 
@@ -247,13 +250,13 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = [
+            "url",
+            "id",
             "user",
             "dog",
             "body",
             "image",
             "posted_at",
-            "id",
-            "url",
             "font_style",
             "text_align",
             "font_size",
@@ -261,6 +264,3 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "comments",
             "reactions",
         ]
-
-
-# For use when displaying sub-lists of users, in which you don't want to see all their information

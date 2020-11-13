@@ -392,6 +392,18 @@ class PostViewSet(ModelViewSet):
     ]
     parser_classes = [JSONParser, FileUploadParser]
 
+    @action(detail=True, methods=["POST"])
+    def react(self, request, pk):
+        reaction_emoji = request.GET.get("r")
+        # POST /posts/<int:pk>/react/?r=🤣
+        post = Post.objects.filter(pk=pk).first()
+        reaction = Reaction.objects.create(
+            reaction=reaction_emoji, user=self.request.user
+        )
+        post.reactions.add(reaction)
+        post.save()
+        return Response(201)
+
     def retrieve(self, request, pk):
         post = (
             Post.objects.filter(pk=pk)
