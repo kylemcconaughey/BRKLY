@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from users.models import User
 from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
-from django.db.models import Q, Count
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):

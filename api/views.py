@@ -1,6 +1,5 @@
-from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count, F
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -14,7 +13,6 @@ from .serializers import (
     CommentSerializer,
     ConversationSerializer,
     DogSerializer,
-    EmbeddedUserSerializer,
     MeetupSerializer,
     MessageSerializer,
     PostSerializer,
@@ -24,7 +22,8 @@ from .serializers import (
 )
 
 """
-GET /users/search/?q=<search_term>      searches for 'search_term' across username, first_name, last_name, and the names of people's dogs (but still returns the person, not the dog)
+GET /users/search/?q=<search_term>      searches for 'search_term' across username, first_name, last_name, and the names of people's dogs
+(but still returns the person, not the dog)
 """
 
 
