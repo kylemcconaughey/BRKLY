@@ -11,8 +11,6 @@ from .models import (
     Comment,
     Request,
 )
-from django.db.models import Q, Count
-from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -273,29 +271,5 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "font_size",
             "liked_by",
             "comments",
-<<<<<<< HEAD
-        ]
-
-
-# For use when displaying sub-lists of users, in which you don't want to see all their information
-
-
-class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
-    user = EmbeddedUserSerializer()
-    upvotes = serializers.IntegerField()
-    downvotes = serializers.IntegerField()
-
-    class Meta:
-        model = DiscussionBoard
-        fields = [
-            "title",
-            "body",
-            "user",
-            "posted_at",
-            "upvotes",
-            "downvotes",
-        ]
-=======
             "reactions",
         ]
->>>>>>> 1a254303b87825ad0c5095bd041d8fa17596c663
