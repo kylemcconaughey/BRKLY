@@ -12,6 +12,7 @@ from .models import (
     Request,
 )
 from django.db.models import Q, Count
+from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -198,11 +199,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ReactionSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
     class Meta:
         model = Reaction
         fields = [
             "reaction",
             "user",
+            "url",
         ]
 
 
@@ -252,22 +256,24 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     comments = CommentSerializer(many=True, read_only=True)
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
+    reactions = ReactionSerializer(many=True)
 
     class Meta:
         model = Post
         fields = [
+            "url",
+            "id",
             "user",
             "dog",
             "body",
             "image",
             "posted_at",
-            "id",
-            "url",
             "font_style",
             "text_align",
             "font_size",
             "liked_by",
             "comments",
+<<<<<<< HEAD
         ]
 
 
@@ -289,3 +295,7 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "upvotes",
             "downvotes",
         ]
+=======
+            "reactions",
+        ]
+>>>>>>> 1a254303b87825ad0c5095bd041d8fa17596c663

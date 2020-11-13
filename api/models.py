@@ -86,15 +86,8 @@ class Conversation(models.Model):
 
 
 class Reaction(models.Model):
-    class ReactionChoices(models.TextChoices):
-        LIKE = "LI", ("Like")
-        LOVE = "LO", ("Love")
-        LAUGH = "LA", ("Laugh")
-        ANGRY = "AN", ("Angry")
 
-    reaction = models.CharField(
-        max_length=2, choices=ReactionChoices.choices, default=ReactionChoices.LIKE
-    )
+    reaction = models.CharField(blank=True, null=True, max_length=20)
 
     user = models.ForeignKey(
         to=User, on_delete=models.CASCADE, related_name="reactions", null=True
