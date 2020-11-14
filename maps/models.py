@@ -1,5 +1,5 @@
 from django.db import models
-from mapbox_location_field.spatial.models import SpatialLocationField
+from mapbox_location_field.models import LocationField, AddressAutoHiddenField
 
 
 class Location(models.Model):
@@ -7,13 +7,18 @@ class Location(models.Model):
 
     description = models.TextField(null=False, blank=False)
 
-    location = SpatialLocationField(
+    location = LocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",
             "center": (35.905740, -78.865402),
             "zoom": 5,
+            "rotate": True,
+            "navigation_buttons": True,
+            "track_location_button": True,
         }
     )
+
+    address = AddressAutoHiddenField()
 
     class LocationTypeChoices(models.TextChoices):
         PARK = "PA", ("Dog Park")
