@@ -3,10 +3,28 @@ from mapbox_location_field.spatial.models import SpatialLocationField
 
 
 class Location(models.Model):
+    name = models.CharField(null=False, blank=False, max_length=255)
+
+    description = models.TextField(null=False, blank=False)
+
     location = SpatialLocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",
-            "center": (-80.793457, 35.782169),
+            "center": (35.905740, -78.865402),
             "zoom": 5,
         }
+    )
+
+    class LocationTypeChoices(models.TextChoices):
+        PARK = "PA", ("Dog Park")
+        RESTAURANT = "RE", ("Restaurant")
+        VET = "VE", ("Veterinarian")
+        TRAIL = "TR", ("Trail")
+
+    location_type = models.CharField(
+        max_length=2,
+        choices=LocationTypeChoices.choices,
+        default=LocationTypeChoices.PARK,
+        null=True,
+        blank=True,
     )
