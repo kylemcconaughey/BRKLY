@@ -12,7 +12,7 @@ from users.models import User
 from .models import (
     Comment,
     Conversation,
-    DiscussionBoard,
+    # DiscussionBoard,
     Dog,
     Meetup,
     Message,
@@ -23,7 +23,7 @@ from .models import (
 from .serializers import (
     CommentSerializer,
     ConversationSerializer,
-    DiscussionBoardSerializer,
+    # DiscussionBoardSerializer,
     DogSerializer,
     MeetupSerializer,
     MessageSerializer,
@@ -502,17 +502,17 @@ class PostViewSet(ModelViewSet):
         raise PermissionDenied()
 
 
-class DiscussionBoardViewSet(ModelViewSet):
-    serializer_classes = [DiscussionBoardSerializer]
-    permission_class = IsAuthenticated
+# class DiscussionBoardViewSet(ModelViewSet):
+#     serializer_classes = [DiscussionBoardSerializer]
+#     permission_class = IsAuthenticated
 
-    def get_queryset(self):
-        return (
-            DiscussionBoard.objects.all()
-            .order_by("-posted_at")
-            .select_related("user")
-            .prefetch_related("upvotes", "downvotes")
-        ).annotate(
-            num_upvotes=Count("upvotes", distinct=True),
-            num_downvotes=Count("downvotes", distinct=True),
-        )
+#     def get_queryset(self):
+#         return (
+#             DiscussionBoard.objects.all()
+#             .order_by("-posted_at")
+#             .select_related("user")
+#             .prefetch_related("upvotes", "downvotes")
+#         ).annotate(
+#             num_upvotes=Count("upvotes", distinct=True),
+#             num_downvotes=Count("downvotes", distinct=True),
+#         )
