@@ -273,3 +273,17 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "comments",
             "reactions",
         ]
+
+
+class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
+    user = EmbeddedUserSerializer()
+    class Meta:
+        model = DiscussionBoard
+        fields = [
+            'title',
+            'body',
+            'user',
+            'posted_at',
+            'upvotes',
+            'downvotes',
+            ]
