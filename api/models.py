@@ -123,8 +123,6 @@ class Meetup(models.Model):
         to=User, on_delete=models.CASCADE, related_name="meetupsadmin"
     )
 
-    # invited = models.ManyToManyField(to=User, related_name="meetup_invites")
-
     attending = models.ManyToManyField(to=User, related_name="meetups")
 
     start_time = models.DateTimeField(null=False, blank=False)
@@ -138,7 +136,6 @@ class Meetup(models.Model):
         null=True,
         blank=True,
     )
-    # needs auto-fill options pulled from geo-API
 
     # recurring = models.whoTheHellKnows
 

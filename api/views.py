@@ -525,4 +525,6 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Location.objects.all().order_by("-created_at")
+        return (
+            Location.objects.all().order_by("-created_at").prefetch_related("meetups")
+        ).annotate(num_meetups=Count("meetups", distinct=True))

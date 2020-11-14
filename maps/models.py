@@ -9,7 +9,7 @@ class Location(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    location = LocationField(
+    coordinates = LocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",
             "center": (35.905740, -78.865402),

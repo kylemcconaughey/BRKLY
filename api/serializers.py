@@ -14,7 +14,16 @@ from .models import (
 from maps.models import Location
 
 
+class LocMeetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meetup
+        fields = ["url", "id", "start_time", "end_time"]
+
+
 class LocationSerializer(serializers.ModelSerializer):
+    num_meetups = serializers.IntegerField()
+    meetups = LocMeetupSerializer(many=True)
+
     class Meta:
         model = Location
         fields = [
@@ -24,6 +33,8 @@ class LocationSerializer(serializers.ModelSerializer):
             "location",
             "address",
             "location_type",
+            "num_meetups",
+            "meetups",
         ]
 
 
@@ -132,7 +143,7 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
             "id",
             "start_time",
             "end_time",
-            "location",
+            "address",
         ]
 
 
