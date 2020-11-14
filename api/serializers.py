@@ -19,11 +19,18 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = [
             "name",
+            "url",
             "description",
             "location",
             "address",
             "location_type",
         ]
+
+
+class EmbeddedLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = ["name", "url", "address", "location"]
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -116,6 +123,8 @@ class EmbeddedConversationSerializer(serializers.ModelSerializer):
 
 
 class EmbeddedMeetupSerializer(serializers.ModelSerializer):
+    location = EmbeddedLocationSerializer()
+
     class Meta:
         model = Meetup
         fields = [
@@ -242,10 +251,12 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 class MeetupSerializer(serializers.ModelSerializer):
     admin = EmbeddedUserSerializer()
     attending = EmbeddedUserSerializer(many=True)
+    location = EmbeddedLocationSerializer()
 
     class Meta:
         model = Meetup
         fields = [
+            "url",
             "admin",
             "attending",
             "start_time",

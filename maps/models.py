@@ -27,6 +27,7 @@ class Location(models.Model):
         RESTAURANT = "RE", ("Restaurant")
         VET = "VE", ("Veterinarian")
         TRAIL = "TR", ("Trail")
+        HOUSE = "HO", ("House")
 
     location_type = models.CharField(
         max_length=2,
