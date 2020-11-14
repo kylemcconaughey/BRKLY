@@ -132,7 +132,11 @@ class Meetup(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
 
     location = models.ForeignKey(
-        to=Location, on_delete=models.CASCADE, related_name="meetups"
+        to=Location,
+        on_delete=models.CASCADE,
+        related_name="meetups",
+        null=True,
+        blank=True,
     )
     # needs auto-fill options pulled from geo-API
 
