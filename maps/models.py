@@ -12,13 +12,13 @@ class Location(models.Model):
     coordinates = LocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",
-            "center": (35.905740, -78.865402),
+            "center": (35.921637, -79.077887),
             "zoom": 5,
             "rotate": True,
             "navigation_buttons": True,
             "track_location_button": True,
         }
-    )
+    )  # this gets reversed when delivered with the api for some reason?
 
     address = AddressAutoHiddenField()
 
