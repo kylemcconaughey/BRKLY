@@ -11,6 +11,19 @@ from .models import (
     Comment,
     Request,
 )
+from maps.models import Location
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = [
+            "name",
+            "description",
+            "location",
+            "address",
+            "location_type",
+        ]
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -277,13 +290,14 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
+
     class Meta:
         model = DiscussionBoard
         fields = [
-            'title',
-            'body',
-            'user',
-            'posted_at',
-            'upvotes',
-            'downvotes',
-            ]
+            "title",
+            "body",
+            "user",
+            "posted_at",
+            "upvotes",
+            "downvotes",
+        ]

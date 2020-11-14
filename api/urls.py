@@ -20,6 +20,7 @@ api_router.register("requests", api_views.RequestViewSet, basename="request")
 api_router.register(
     "discussionboards", api_views.DiscussionBoardViewSet, basename="discussionboard"
 )
+api_router.register("locations", api_views.LocationViewSet, basename="location")
 
 
 urlpatterns = [

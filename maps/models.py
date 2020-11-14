@@ -7,6 +7,8 @@ class Location(models.Model):
 
     description = models.TextField(null=False, blank=False)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     location = LocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",

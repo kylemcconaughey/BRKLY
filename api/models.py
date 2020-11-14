@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.fields import CharField
 from users.models import User
+from maps.models import Location
 
 # Create your models here.
 
@@ -130,7 +131,9 @@ class Meetup(models.Model):
 
     end_time = models.DateTimeField(null=True, blank=True)
 
-    location = models.CharField(null=False, blank=False, max_length=255)
+    location = models.ForeignKey(
+        to=Location, on_delete=models.CASCADE, related_name="meetups"
+    )
     # needs auto-fill options pulled from geo-API
 
     # recurring = models.whoTheHellKnows

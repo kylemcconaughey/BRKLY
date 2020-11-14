@@ -20,6 +20,7 @@ from .models import (
     Reaction,
     Request,
 )
+from maps.models import Location
 from .serializers import (
     CommentSerializer,
     ConversationSerializer,
@@ -31,6 +32,7 @@ from .serializers import (
     ReactionSerializer,
     UserSerializer,
     RequestSerializer,
+    LocationSerializer,
 )
 
 """
@@ -503,8 +505,8 @@ class PostViewSet(ModelViewSet):
 
 
 class DiscussionBoardViewSet(ModelViewSet):
-    serializer_classes = [DiscussionBoardSerializer]
-    permission_class = IsAuthenticated
+    serializer_class = DiscussionBoardSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return (
@@ -516,3 +518,11 @@ class DiscussionBoardViewSet(ModelViewSet):
             num_upvotes=Count("upvotes", distinct=True),
             num_downvotes=Count("downvotes", distinct=True),
         )
+
+
+class LocationViewSet(ModelViewSet):
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Location.objects.all().order_by("-created_at")
