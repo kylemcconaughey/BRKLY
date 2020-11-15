@@ -517,9 +517,8 @@ class DiscussionBoardViewSet(ModelViewSet):
         ).annotate(
             num_upvotes=Count("upvotes", distinct=True),
             num_downvotes=Count("downvotes", distinct=True),
-            total_votes=(
-                Count("upvotes", distinct=True) - Count("downvotes", distinct=True)
-            ),
+            total_votes=(Count("upvotes", distinct=True))
+            - (Count("downvotes", distinct=True)),
         )
 
     @action(detail=True, methods=["POST"])
@@ -544,4 +543,4 @@ class LocationViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Location.objects.all().order_by("-created_at").prefetch_related("meetups")
-        ).annotate(num_meetups=Count("meetups", distinct=True))
+        )  # .annotate(num_meetups=Count("meetups", distinct=True))

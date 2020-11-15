@@ -15,15 +15,15 @@ from django.db.models import Q, Count
 from maps.models import Location
 
 
-class LocMeetupSerializer(serializers.ModelSerializer):
+class LocationMeetupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meetup
         fields = ["url", "start_time", "end_time"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
-    num_meetups = serializers.IntegerField()
-    meetups = LocMeetupSerializer(many=True)
+    # num_meetups = serializers.IntegerField()
+    meetups = LocationMeetupSerializer(many=True)
 
     class Meta:
         model = Location
@@ -34,7 +34,7 @@ class LocationSerializer(serializers.ModelSerializer):
             "coordinates",
             "address",
             "location_type",
-            "num_meetups",
+            # "num_meetups",
             "meetups",
         ]
 
