@@ -519,17 +519,17 @@ class DiscussionBoardViewSet(ModelViewSet):
             num_downvotes=Count("downvotes", distinct=True),
         )
 
-
-class LocationViewSet(ModelViewSet):
-    serializer_class = LocationSerializer
-    permission_classes = [IsAuthenticated]
-
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
         board.upvotes.add(self.request.user)
         board.save()
         return Response(status=201)
+
+
+class LocationViewSet(ModelViewSet):
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return (

@@ -11,9 +11,7 @@ from .models import (
     Comment,
     Request,
 )
-<<<<<<< HEAD
 from django.db.models import Q, Count
-=======
 from maps.models import Location
 
 
@@ -45,7 +43,6 @@ class EmbeddedLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = ["name", "url", "address", "coordinates"]
->>>>>>> kmlm
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -310,7 +307,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "font_size",
             "liked_by",
             "comments",
-            'reactions',
+            "reactions",
         ]
 
 
