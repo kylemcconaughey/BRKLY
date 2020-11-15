@@ -32,7 +32,6 @@ class LocationSerializer(serializers.ModelSerializer):
             "url",
             "description",
             "coordinates",
-            "address",
             "location_type",
             # "num_meetups",
             "meetups",
@@ -42,7 +41,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class EmbeddedLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ["name", "url", "address", "coordinates"]
+        fields = ["name", "url", "coordinates"]
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -143,7 +142,7 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
             "url",
             "start_time",
             "end_time",
-            "address",
+            "location",
         ]
 
 
