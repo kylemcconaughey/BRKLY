@@ -9,6 +9,8 @@ class Location(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    free = models.BooleanField(blank=False, null=False, default=False)
+
     coordinates = LocationField(
         map_attrs={
             "style": "mapbox://styles/mapbox/streets-v11",
