@@ -483,8 +483,17 @@ class DiscussionBoardViewSet(ModelViewSet):
     serializer_class = DiscussionBoardSerializer
     permission_class = IsAuthenticated
 
+    @action (detail=True, methods=['POST'])
+    def upvote(self, request, pk):
+        board = DiscussionBoard.objects.filter(pk=pk).first()
+        board.upvotes.add(self.request.user)
+        board.save()
+        return Response(status=201)
+
     def get_queryset(self):
-        return DiscussionBoard.objects.all().order_by("-posted_at")
+        # return DiscussionBoard.objects.all().order_by("-posted_at")
+        return DiscussionBoard.objects.all().annotate(num_upvotes=Count('upvotes', distinc=True), num_downvotes=Count('downvotes', distinct=True), 
+        total_votes=(Count('upvotes', distinct=True) - (Count('downvotes', distinct=True)))).order_by('-total_votes')
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:

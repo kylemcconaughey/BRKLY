@@ -248,8 +248,8 @@ class DiscussionBoard(models.Model):
 
     posted_at = models.DateTimeField(auto_now_add=True)
 
-    upvote = models.ManyToManyField(to=User, related_name="upvote", blank=True)
-    downvote = models.ManyToManyField(to=User, related_name="downvote", blank=True)
+    upvotes = models.ManyToManyField(to=User, related_name="upvotes", blank=True)
+    downvotes = models.ManyToManyField(to=User, related_name="downvotes", blank=True)
 
     def __str__(self):
         return f"{self.title}"

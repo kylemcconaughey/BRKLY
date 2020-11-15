@@ -266,15 +266,20 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
+    num_upvotes = serializers.IntegerField()
+    num_downvotes = serializers.IntegerField()
+    total_votes = serializers.IntegerField()
     class Meta:
         model = DiscussionBoard
         fields = [
+            'url',
             'title',
             'body',
             'user',
             'posted_at',
-            'upvote',
-            'downvote',
+            'num_upvotes',
+            'num_downvotes',
+            'total_votes',
             ]
 
    
