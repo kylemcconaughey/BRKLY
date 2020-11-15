@@ -1,6 +1,17 @@
 from rest_framework import serializers
 from users.models import User
-from .models import Dog, Message, Conversation, Reaction, Meetup, Post, Comment, Request
+from .models import (
+    DiscussionBoard,
+    Dog,
+    Message,
+    Conversation,
+    Reaction,
+    Meetup,
+    Post,
+    Comment,
+    Request,
+)
+from django.db.models import Q, Count
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -261,5 +272,24 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "font_size",
             "liked_by",
             "comments",
-            "reactions",
+        ]
+
+
+class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
+    user = EmbeddedUserSerializer()
+    num_upvotes = serializers.IntegerField()
+    num_downvotes = serializers.IntegerField()
+    total_votes = serializers.IntegerField()
+
+    class Meta:
+        model = DiscussionBoard
+        fields = [
+            "url",
+            "title",
+            "body",
+            "user",
+            "posted_at",
+            "num_upvotes",
+            "num_downvotes",
+            "total_votes",
         ]
