@@ -517,12 +517,22 @@ class DiscussionBoardViewSet(ModelViewSet):
         ).annotate(
             num_upvotes=Count("upvotes", distinct=True),
             num_downvotes=Count("downvotes", distinct=True),
+            total_votes=(
+                Count("upvotes", distinct=True) - Count("downvotes", distinct=True)
+            ),
         )
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
         board.upvotes.add(self.request.user)
+        board.save()
+        return Response(status=201)
+
+    @action(detail=True, methods=["POST"])
+    def downvote(self, request, pk):
+        board = DiscussionBoard.objects.filter(pk=pk).first()
+        board.downvotes.add(self.request.user)
         board.save()
         return Response(status=201)
 
