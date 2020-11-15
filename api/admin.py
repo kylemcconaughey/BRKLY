@@ -1,5 +1,17 @@
 from django.contrib import admin
-from .models import Dog, Conversation, Message, Reaction, Meetup, Post, Comment, Request, DiscussionBoard
+from .models import (
+    Dog,
+    Conversation,
+    Message,
+    Reaction,
+    Meetup,
+    Post,
+    Comment,
+    Request,
+    DiscussionBoard,
+)
+from maps.models import Location
+from mapbox_location_field.admin import MapAdmin
 
 # Register your models here.
 
@@ -12,3 +24,4 @@ admin.site.register(Post)
 admin.site.register(Comment)
 admin.site.register(Request)
 admin.site.register(DiscussionBoard)
+admin.site.register(Location, MapAdmin)

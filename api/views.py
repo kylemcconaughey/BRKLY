@@ -9,10 +9,22 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
-from .models import Comment, Conversation, DiscussionBoard, Dog, Meetup, Message, Post, Reaction, Request
+from .models import (
+    Comment,
+    Conversation,
+    DiscussionBoard,
+    Dog,
+    Meetup,
+    Message,
+    Post,
+    Reaction,
+    Request,
+)
+from maps.models import Location
 from .serializers import (
     CommentSerializer,
-    ConversationSerializer, DiscussionBoardSerializer,
+    ConversationSerializer,
+    DiscussionBoardSerializer,
     DogSerializer,
     MeetupSerializer,
     MessageSerializer,
@@ -20,6 +32,7 @@ from .serializers import (
     ReactionSerializer,
     UserSerializer,
     RequestSerializer,
+    LocationSerializer,
 )
 
 """
@@ -490,11 +503,28 @@ class PostViewSet(ModelViewSet):
             return serializer.save(user=self.request.user)
         raise PermissionDenied()
 
+
 class DiscussionBoardViewSet(ModelViewSet):
     serializer_class = DiscussionBoardSerializer
-    permission_class = IsAuthenticated
+    permission_classes = [IsAuthenticated]
 
-    @action (detail=True, methods=['POST'])
+    def get_queryset(self):
+        return (
+            DiscussionBoard.objects.all()
+            .order_by("-posted_at")
+            .select_related("user")
+            .prefetch_related("upvotes", "downvotes")
+        ).annotate(
+            num_upvotes=Count("upvotes", distinct=True),
+            num_downvotes=Count("downvotes", distinct=True),
+        )
+
+
+class LocationViewSet(ModelViewSet):
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
         board.upvotes.add(self.request.user)
@@ -502,11 +532,6 @@ class DiscussionBoardViewSet(ModelViewSet):
         return Response(status=201)
 
     def get_queryset(self):
-        # return DiscussionBoard.objects.all().order_by("-posted_at")
-        return DiscussionBoard.objects.all().annotate(num_upvotes=Count('upvotes', distinc=True), num_downvotes=Count('downvotes', distinct=True), 
-        total_votes=(Count('upvotes', distinct=True) - (Count('downvotes', distinct=True)))).order_by('-total_votes')
-
-    def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            return serializer.save(user=self.request.user)
-        raise PermissionDenied()
+        return (
+            Location.objects.all().order_by("-created_at").prefetch_related("meetups")
+        ).annotate(num_meetups=Count("meetups", distinct=True))

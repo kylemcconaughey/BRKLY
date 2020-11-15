@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 prospector = "*"
+black = "*"
 
 [packages]
 django = "*"
@@ -23,6 +24,10 @@ pillow = "*"
 django-cors-headers = "*"
 boto3 = "*"
 django-storages = "*"
+django-mapbox-location-field = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

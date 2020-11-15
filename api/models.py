@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.fields import CharField
 from users.models import User
+from maps.models import Location
 
 # Create your models here.
 
@@ -122,16 +123,19 @@ class Meetup(models.Model):
         to=User, on_delete=models.CASCADE, related_name="meetupsadmin"
     )
 
-    # invited = models.ManyToManyField(to=User, related_name="meetup_invites")
-
     attending = models.ManyToManyField(to=User, related_name="meetups")
 
     start_time = models.DateTimeField(null=False, blank=False)
 
     end_time = models.DateTimeField(null=True, blank=True)
 
-    location = models.CharField(null=False, blank=False, max_length=255)
-    # needs auto-fill options pulled from geo-API
+    location = models.ForeignKey(
+        to=Location,
+        on_delete=models.CASCADE,
+        related_name="meetups",
+        null=True,
+        blank=True,
+    )
 
     # recurring = models.whoTheHellKnows
 
@@ -231,13 +235,15 @@ class Request(models.Model):
 
     accepted = models.BooleanField(blank=False, null=False, default=False)
 
+
 class DiscussionBoard(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
 
     body = models.TextField(blank=False, null=False)
-    # max length required on charfield
 
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="discussion")
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="discussion_boards"
+    )
 
     posted_at = models.DateTimeField(auto_now_add=True)
 

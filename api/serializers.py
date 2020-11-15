@@ -11,7 +11,41 @@ from .models import (
     Comment,
     Request,
 )
+<<<<<<< HEAD
 from django.db.models import Q, Count
+=======
+from maps.models import Location
+
+
+class LocMeetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meetup
+        fields = ["url", "id", "start_time", "end_time"]
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    num_meetups = serializers.IntegerField()
+    meetups = LocMeetupSerializer(many=True)
+
+    class Meta:
+        model = Location
+        fields = [
+            "name",
+            "url",
+            "description",
+            "coordinates",
+            "address",
+            "location_type",
+            "num_meetups",
+            "meetups",
+        ]
+
+
+class EmbeddedLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = ["name", "url", "address", "coordinates"]
+>>>>>>> kmlm
 
 
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
@@ -104,6 +138,8 @@ class EmbeddedConversationSerializer(serializers.ModelSerializer):
 
 
 class EmbeddedMeetupSerializer(serializers.ModelSerializer):
+    location = EmbeddedLocationSerializer()
+
     class Meta:
         model = Meetup
         fields = [
@@ -111,7 +147,7 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
             "id",
             "start_time",
             "end_time",
-            "location",
+            "address",
         ]
 
 
@@ -230,10 +266,12 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 class MeetupSerializer(serializers.ModelSerializer):
     admin = EmbeddedUserSerializer()
     attending = EmbeddedUserSerializer(many=True)
+    location = EmbeddedLocationSerializer()
 
     class Meta:
         model = Meetup
         fields = [
+            "url",
             "admin",
             "attending",
             "start_time",
@@ -272,6 +310,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             "font_size",
             "liked_by",
             "comments",
+            'reactions',
         ]
 
 
