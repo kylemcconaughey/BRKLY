@@ -141,7 +141,6 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
         model = Meetup
         fields = [
             "url",
-            "id",
             "start_time",
             "end_time",
             "address",

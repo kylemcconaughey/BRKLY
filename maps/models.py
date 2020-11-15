@@ -19,10 +19,11 @@ class Location(models.Model):
             "rotate": True,
             "navigation_buttons": True,
             "track_location_button": True,
+            "id": "map",
         }
     )  # this gets reversed when delivered with the api for some reason?
 
-    address = AddressAutoHiddenField()
+    address = AddressAutoHiddenField(map_id="map")
 
     class LocationTypeChoices(models.TextChoices):
         PARK = "PA", ("Dog Park")
