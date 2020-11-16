@@ -128,15 +128,13 @@ class Meetup(models.Model):
 
     end_time = models.DateTimeField(null=True, blank=True)
 
-    # location = models.ForeignKey(
-    #     to=Location,
-    #     on_delete=models.CASCADE,
-    #     related_name="meetups",
-    #     null=True,
-    #     blank=True,
-    # )
-
-    location = models.CharField(null=True, blank=True, max_length=255)
+    location = models.ForeignKey(
+        to=Location,
+        on_delete=models.CASCADE,
+        related_name="location_meetups",
+        null=True,
+        blank=True,
+    )
 
     # recurring = models.whoTheHellKnows
 
