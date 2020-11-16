@@ -21,6 +21,7 @@ api_router.register(
     "discussionboards", api_views.DiscussionBoardViewSet, basename="discussionboard"
 )
 api_router.register("locations", api_views.LocationViewSet, basename="location")
+api_router.register("notes", api_views.NoteViewSet, basename="note")
 
 
 urlpatterns = [

@@ -2,8 +2,6 @@ from django.db import models
 from users.models import User
 from maps.models import Location
 
-# Create your models here.
-
 
 class Dog(models.Model):
 
@@ -112,7 +110,6 @@ class Message(models.Model):
     )
 
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
-    # needs media routes set up
 
     read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
@@ -135,8 +132,6 @@ class Meetup(models.Model):
         null=True,
         blank=True,
     )
-
-    # recurring = models.whoTheHellKnows
 
 
 class Post(models.Model):
@@ -251,3 +246,27 @@ class DiscussionBoard(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+
+class Note(models.Model):
+
+    body = models.TextField(null=False, blank=False)
+
+    board = models.ForeignKey(
+        to=DiscussionBoard, on_delete=models.CASCADE, related_name="notes"
+    )
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="notes")
+
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    upvotes = models.ManyToManyField(to=User, related_name="note_upvotes", blank=True)
+    downvotes = models.ManyToManyField(
+        to=User, related_name="note_downvotes", blank=True
+    )
+
+    num_upvotes = models.IntegerField(default=0)
+    num_downvotes = models.IntegerField(default=0)
+
+    def total_votes(self):
+        return self.num_upvotes - self.num_downvotes

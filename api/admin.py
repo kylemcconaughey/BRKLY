@@ -8,6 +8,7 @@ from .models import (
     Post,
     Comment,
     Request,
+    Note,
     DiscussionBoard,
 )
 from maps.models import Location
@@ -25,3 +26,4 @@ admin.site.register(Comment)
 admin.site.register(Request)
 admin.site.register(DiscussionBoard)
 admin.site.register(Location, MapAdmin)
+admin.site.register(Note)
