@@ -11,20 +11,10 @@ from .models import (
     Comment,
     Request,
 )
-from django.db.models import Q, Count
 from maps.models import Location
 
 
-class LocationMeetupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Meetup
-        fields = ["url", "start_time", "end_time"]
-
-
 class LocationSerializer(serializers.ModelSerializer):
-    # num_meetups = serializers.IntegerField()
-    meetups = LocationMeetupSerializer(many=True)
-
     class Meta:
         model = Location
         fields = [
@@ -33,8 +23,6 @@ class LocationSerializer(serializers.ModelSerializer):
             "description",
             "coordinates",
             "location_type",
-            # "num_meetups",
-            "meetups",
         ]
 
 
@@ -326,4 +314,21 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
+        ]
+
+
+class UserSearchSerializer(serializers.ModelSerializer):
+
+    dogs = EmbeddedDogSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "url",
+            "id",
+            "picture",
+            "dogs",
         ]
