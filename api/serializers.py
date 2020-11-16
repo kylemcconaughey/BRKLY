@@ -10,6 +10,7 @@ from .models import (
     Post,
     Comment,
     Request,
+    Note,
 )
 from maps.models import Location
 
@@ -331,4 +332,23 @@ class UserSearchSerializer(serializers.ModelSerializer):
             "id",
             "picture",
             "dogs",
+        ]
+
+
+class NoteSerializer(serializers.HyperLinkedModelSerializer):
+
+    num_upvotes = serializers.IntegerField()
+    num_downvotes = serializers.IntegerField()
+
+    class Meta:
+        model = Note
+        fields = [
+            "body",
+            "board",
+            "user",
+            "posted_at",
+            "upvotes",
+            "downvotes",
+            "num_upvotes",
+            "num_downvotes",
         ]

@@ -251,3 +251,19 @@ class DiscussionBoard(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+
+class Note(models.Model):
+
+    body = models.TextField(null=False, blank=False)
+
+    board = models.ForeignKey(
+        to=DiscussionBoard, on_delete=models.CASCADE, related_name="notes"
+    )
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="notes")
+
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    upvotes = models.ManyToManyField(to=User, related_name="upvotes", blank=True)
+    downvotes = models.ManyToManyField(to=User, related_name="downvotes", blank=True)

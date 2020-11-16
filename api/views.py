@@ -19,6 +19,7 @@ from .models import (
     Post,
     Reaction,
     Request,
+    Note,
 )
 from maps.models import Location
 from .serializers import (
@@ -34,6 +35,7 @@ from .serializers import (
     RequestSerializer,
     LocationSerializer,
     UserSearchSerializer,
+    NoteSerializer,
 )
 
 """
@@ -548,3 +550,36 @@ class LocationViewSet(ModelViewSet):
         return Location.objects.all().order_by(
             "-created_at"
         )  # .annotate(num_meetups=Count("meetups", distinct=True))
+
+
+class NoteViewSet(ModelViewSet):
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated, PostMaker]
+
+    def get_queryset(self):
+        return (
+            Note.objects.all()
+            .order_by("-posted_at")
+            .annotate(
+                num_upvotes=Count("upvotes", distinct=True),
+                num_downvotes=Count("downvotes", distinct=True),
+                total_votes=(
+                    (Count("upvotes", distinct=True))
+                    - (Count("downvotes", distinct=True))
+                ),
+            )
+        )
+
+    @action(detail=True, methods=["POST"])
+    def upvote(self, request, pk):
+        note = Note.objects.filter(pk=pk).first()
+        note.upvotes.add(self.request.user)
+        note.save()
+        return Response(status=201)
+
+    @action(detail=True, methods=["POST"])
+    def downvote(self, request, pk):
+        note = Note.objects.filter(pk=pk).first()
+        note.downvotes.add(self.request.user)
+        note.save()
+        return Response(status=201)
