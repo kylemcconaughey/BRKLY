@@ -301,10 +301,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
 
-    # num_note_upvotes = serializers.IntegerField()
-    # num_note_downvotes = serializers.IntegerField()
-    # total_note_votes = serializers.IntegerField()
-
     class Meta:
         model = Note
         fields = [

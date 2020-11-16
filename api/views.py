@@ -553,7 +553,7 @@ class LocationViewSet(ModelViewSet):
     def get_queryset(self):
         return Location.objects.all().order_by(
             "-created_at"
-        )  # .annotate(num_meetups=Count("meetups", distinct=True))
+        )
 
 
 class NoteViewSet(ModelViewSet):
@@ -561,17 +561,7 @@ class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, PostMaker]
 
     def get_queryset(self):
-        return (
-            Note.objects.all().order_by("-posted_at")
-            # .annotate(
-            #     num_upvotes=Count("upvotes", distinct=True),
-            #     num_downvotes=Count("downvotes", distinct=True),
-            #     total_votes=(
-            #         (Count("upvotes", distinct=True))
-            #         - (Count("downvotes", distinct=True))
-            #     ),
-            # )
-        )
+        return Note.objects.all().order_by("-posted_at")
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):

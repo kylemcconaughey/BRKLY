@@ -2,8 +2,6 @@ from django.db import models
 from users.models import User
 from maps.models import Location
 
-# Create your models here.
-
 
 class Dog(models.Model):
 
@@ -112,7 +110,6 @@ class Message(models.Model):
     )
 
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
-    # needs media routes set up
 
     read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
@@ -135,8 +132,6 @@ class Meetup(models.Model):
         null=True,
         blank=True,
     )
-
-    # recurring = models.whoTheHellKnows
 
 
 class Post(models.Model):
