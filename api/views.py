@@ -518,13 +518,17 @@ class DiscussionBoardViewSet(ModelViewSet):
             DiscussionBoard.objects.all()
             .order_by("-posted_at")
             .select_related("user")
-            .prefetch_related("upvotes", "downvotes")
+            .prefetch_related(
+                "upvotes", "downvotes", "notes", "notes__upvotes", "notes__downvotes"
+            )
         ).annotate(
             num_upvotes=Count("upvotes", distinct=True),
             num_downvotes=Count("downvotes", distinct=True),
             total_votes=(
                 (Count("upvotes", distinct=True)) - (Count("downvotes", distinct=True))
             ),
+            num_notes=Count("notes", distinct=True),
+            num_note_upvotes=Count("notes__upvotes", distinct=True),
         )
 
     @action(detail=True, methods=["POST"])
@@ -558,16 +562,15 @@ class NoteViewSet(ModelViewSet):
 
     def get_queryset(self):
         return (
-            Note.objects.all()
-            .order_by("-posted_at")
-            .annotate(
-                num_upvotes=Count("upvotes", distinct=True),
-                num_downvotes=Count("downvotes", distinct=True),
-                total_votes=(
-                    (Count("upvotes", distinct=True))
-                    - (Count("downvotes", distinct=True))
-                ),
-            )
+            Note.objects.all().order_by("-posted_at")
+            # .annotate(
+            #     num_upvotes=Count("upvotes", distinct=True),
+            #     num_downvotes=Count("downvotes", distinct=True),
+            #     total_votes=(
+            #         (Count("upvotes", distinct=True))
+            #         - (Count("downvotes", distinct=True))
+            #     ),
+            # )
         )
 
     @action(detail=True, methods=["POST"])
@@ -575,9 +578,11 @@ class NoteViewSet(ModelViewSet):
         note = Note.objects.filter(pk=pk).first()
         if self.request.user not in note.upvotes.all():
             note.upvotes.add(self.request.user)
+            note.num_upvotes += 1
             note.save()
             return Response(status=201)
         note.upvotes.remove(self.request.user)
+        note.num_upvotes -= 1
         note.save()
         return Response(status=204)
 
@@ -586,8 +591,10 @@ class NoteViewSet(ModelViewSet):
         note = Note.objects.filter(pk=pk).first()
         if self.request.user not in note.downvotes.all():
             note.downvotes.add(self.request.user)
+            note.num_downvotes += 1
             note.save()
             return Response(status=201)
         note.downvotes.remove(self.request.user)
+        note.num_downvotes -= 1
         note.save()
         return Response(status=204)

@@ -269,3 +269,9 @@ class Note(models.Model):
     downvotes = models.ManyToManyField(
         to=User, related_name="note_downvotes", blank=True
     )
+
+    num_upvotes = models.IntegerField(default=0)
+    num_downvotes = models.IntegerField(default=0)
+
+    def total_votes(self):
+        return self.num_upvotes - self.num_downvotes

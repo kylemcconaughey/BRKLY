@@ -13,6 +13,7 @@ from .models import (
     Note,
 )
 from maps.models import Location
+from django.db.models import Q, Count
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -298,11 +299,35 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
+class NoteSerializer(serializers.ModelSerializer):
+
+    # num_note_upvotes = serializers.IntegerField()
+    # num_note_downvotes = serializers.IntegerField()
+    # total_note_votes = serializers.IntegerField()
+
+    class Meta:
+        model = Note
+        fields = [
+            "url",
+            "body",
+            "board",
+            "user",
+            "posted_at",
+            "upvotes",
+            "downvotes",
+            "num_upvotes",
+            "num_downvotes",
+            "total_votes",
+        ]
+
+
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     num_upvotes = serializers.IntegerField()
     num_downvotes = serializers.IntegerField()
     total_votes = serializers.IntegerField()
+    num_notes = serializers.IntegerField()
+    notes = NoteSerializer(many=True)
 
     class Meta:
         model = DiscussionBoard
@@ -315,6 +340,8 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
+            "notes",
+            "num_notes",
         ]
 
 
@@ -332,26 +359,4 @@ class UserSearchSerializer(serializers.ModelSerializer):
             "id",
             "picture",
             "dogs",
-        ]
-
-
-class NoteSerializer(serializers.ModelSerializer):
-
-    num_upvotes = serializers.IntegerField()
-    num_downvotes = serializers.IntegerField()
-    total_votes = serializers.IntegerField()
-
-    class Meta:
-        model = Note
-        fields = [
-            "url",
-            "body",
-            "board",
-            "user",
-            "posted_at",
-            "upvotes",
-            "downvotes",
-            "num_upvotes",
-            "num_downvotes",
-            "total_votes",
         ]
