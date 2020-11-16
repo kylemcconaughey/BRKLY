@@ -33,6 +33,7 @@ from .serializers import (
     UserSerializer,
     RequestSerializer,
     LocationSerializer,
+    UserSearchSerializer,
 )
 
 """
@@ -110,7 +111,7 @@ class DogViewSet(ModelViewSet):
             Q(name__icontains=search_term)
             | Q(owner__username__icontains=search_term)
             | Q(owner__first_name__icontains=search_term)
-        ).distinct("id")
+        ).annotate(num_posts=Count("posts", distinct=True))
         serializer = DogSerializer(dogs, context={"request": request}, many=True)
         return Response(serializer.data)
 
@@ -125,7 +126,7 @@ class DogViewSet(ModelViewSet):
             | Q(group_size__icontains=search_term)
             | Q(vaccinated__icontains=search_term)
             | Q(kid_friendly__icontains=search_term)
-        ).distinct("id")
+        ).annotate(num_posts=Count("posts", distinct=True))
         serializer = DogSerializer(dogs, context={"request": request}, many=True)
         return Response(serializer.data)
 
@@ -176,7 +177,9 @@ class UserViewSet(ModelViewSet):
             | Q(last_name__icontains=search_term)
             | Q(dogs__name__icontains=search_term)
         ).distinct("id")
-        serializer = UserSerializer(users, context={"request": request}, many=True)
+        serializer = UserSearchSerializer(
+            users, context={"request": request}, many=True
+        )
         return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
@@ -542,6 +545,6 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return (
-            Location.objects.all().order_by("-created_at").prefetch_related("meetups")
+        return Location.objects.all().order_by(
+            "-created_at"
         )  # .annotate(num_meetups=Count("meetups", distinct=True))
