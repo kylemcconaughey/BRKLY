@@ -136,7 +136,7 @@ class Meetup(models.Model):
     #     blank=True,
     # )
 
-    location = models.CharField(null=False, blank=False, max_length=255)
+    location = models.CharField(null=True, blank=True, max_length=255)
 
     # recurring = models.whoTheHellKnows
 
