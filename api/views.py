@@ -573,13 +573,21 @@ class NoteViewSet(ModelViewSet):
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         note = Note.objects.filter(pk=pk).first()
-        note.upvotes.add(self.request.user)
+        if self.request.user not in note.upvotes.all():
+            note.upvotes.add(self.request.user)
+            note.save()
+            return Response(status=201)
+        note.upvotes.remove(self.request.user)
         note.save()
-        return Response(status=201)
+        return Response(status=204)
 
     @action(detail=True, methods=["POST"])
     def downvote(self, request, pk):
         note = Note.objects.filter(pk=pk).first()
-        note.downvotes.add(self.request.user)
+        if self.request.user not in note.downvotes.all():
+            note.downvotes.add(self.request.user)
+            note.save()
+            return Response(status=201)
+        note.downvotes.remove(self.request.user)
         note.save()
-        return Response(status=201)
+        return Response(status=204)

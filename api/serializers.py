@@ -335,14 +335,16 @@ class UserSearchSerializer(serializers.ModelSerializer):
         ]
 
 
-class NoteSerializer(serializers.HyperLinkedModelSerializer):
+class NoteSerializer(serializers.ModelSerializer):
 
     num_upvotes = serializers.IntegerField()
     num_downvotes = serializers.IntegerField()
+    total_votes = serializers.IntegerField()
 
     class Meta:
         model = Note
         fields = [
+            "url",
             "body",
             "board",
             "user",
@@ -351,4 +353,5 @@ class NoteSerializer(serializers.HyperLinkedModelSerializer):
             "downvotes",
             "num_upvotes",
             "num_downvotes",
+            "total_votes",
         ]

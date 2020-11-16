@@ -265,5 +265,7 @@ class Note(models.Model):
 
     posted_at = models.DateTimeField(auto_now_add=True)
 
-    upvotes = models.ManyToManyField(to=User, related_name="upvotes", blank=True)
-    downvotes = models.ManyToManyField(to=User, related_name="downvotes", blank=True)
+    upvotes = models.ManyToManyField(to=User, related_name="note_upvotes", blank=True)
+    downvotes = models.ManyToManyField(
+        to=User, related_name="note_downvotes", blank=True
+    )
