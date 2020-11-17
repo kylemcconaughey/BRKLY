@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "users",
     "api",
     "maps",
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -184,3 +185,15 @@ AWS_DEFAULT_ACL = "public-read"
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 MAPBOX_KEY = env("MAPBOX_KEY")
+
+ASGI_APPLICATION = "project.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        'ROUTING': 'api.routing.channel_routing',
+    }
+}

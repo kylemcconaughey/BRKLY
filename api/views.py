@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -588,3 +588,6 @@ class NoteViewSet(ModelViewSet):
         note.num_downvotes -= 1
         note.save()
         return Response(status=204)
+
+def user_list(request):
+    return render (request, 'user_list.html')

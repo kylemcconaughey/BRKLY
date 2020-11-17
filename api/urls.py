@@ -26,4 +26,5 @@ api_router.register("notes", api_views.NoteViewSet, basename="note")
 
 urlpatterns = [
     path("", include(api_router.urls)),
+    path('user_list', api_views.user_list, name='user_list'),
 ]
