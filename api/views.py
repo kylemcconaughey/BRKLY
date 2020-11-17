@@ -459,7 +459,7 @@ class PostViewSet(ModelViewSet):
                 "liked_by", "comments", "comments__user", "comments__liked_by"
             )
             .order_by("-posted_at")
-        )
+        ).distinct("posted_at")
         serializer = PostSerializer(posts, many=True, context={"request": request})
         return Response(serializer.data)
 
@@ -481,12 +481,16 @@ class PostViewSet(ModelViewSet):
         post.image.delete(save=True)
         return Response(status=204)
 
-    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["POST"])
     def like(self, request, pk):
         post = self.get_object()
-        post.liked_by.add(self.request.user)
+        if self.request.user not in post.liked_by.all():
+            post.liked_by.add(self.request.user)
+            post.save()
+            return Response(status=201)
+        post.liked_by.remove(self.request.user)
         post.save()
-        return Response(status=201)
+        return Response(status=204)
 
     def get_parser_classes(self):
         print(self.action)
@@ -534,16 +538,24 @@ class DiscussionBoardViewSet(ModelViewSet):
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
-        board.upvotes.add(self.request.user)
+        if self.request.user not in board.upvotes.all():
+            board.upvotes.add(self.request.user)
+            board.save()
+            return Response(status=201)
+        board.upvotes.remove(self.request.user)
         board.save()
-        return Response(status=201)
+        return Response(status=204)
 
     @action(detail=True, methods=["POST"])
     def downvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
-        board.downvotes.add(self.request.user)
+        if self.request.user not in board.downvotes.all():
+            board.downvotes.add(self.request.user)
+            board.save()
+            return Response(status=201)
+        board.downvotes.remove(self.request.user)
         board.save()
-        return Response(status=201)
+        return Response(status=204)
 
 
 class LocationViewSet(ModelViewSet):
@@ -551,9 +563,7 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Location.objects.all().order_by(
-            "-created_at"
-        )
+        return Location.objects.all().order_by("-created_at")
 
 
 class NoteViewSet(ModelViewSet):
