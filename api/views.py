@@ -585,7 +585,7 @@ class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, PostMaker]
 
     def get_queryset(self):
-        return Note.objects.all().order_by("-posted_at")
+        return Note.objects.all()
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
