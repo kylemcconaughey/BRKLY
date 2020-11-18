@@ -554,17 +554,15 @@ class DiscussionBoardViewSet(ModelViewSet):
         )
 
     def retrieve(self, request, pk):
-        return (
-            (
-                DiscussionBoard.objects.filter(pk=pk)
-                .select_related("user")
-                .prefetch_related(
-                    "upvotes",
-                    "downvotes",
-                    "notes",
-                    "notes__upvotes",
-                    "notes__downvotes",
-                )
+        board = (
+            DiscussionBoard.objects.filter(pk=pk)
+            .select_related("user")
+            .prefetch_related(
+                "upvotes",
+                "downvotes",
+                "notes",
+                "notes__upvotes",
+                "notes__downvotes",
             )
             .annotate(
                 num_upvotes=Count("upvotes", distinct=True),
@@ -578,6 +576,8 @@ class DiscussionBoardViewSet(ModelViewSet):
             )
             .first()
         )
+        serializer = DiscussionBoardSerializer(board, context={"request": request})
+        return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
