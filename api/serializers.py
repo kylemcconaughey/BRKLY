@@ -316,11 +316,9 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class DiscussionBoardPFSerializer(serializers.ModelSerializer):
-    user = EmbeddedUserSerializer()
-
     class Meta:
         model = DiscussionBoard
-        fields = ["title", "body", "user", "posted_at"]
+        fields = ["title", "body", "posted_at"]
 
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
