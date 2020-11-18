@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.decorators import action
@@ -537,7 +537,11 @@ class DiscussionBoardViewSet(ModelViewSet):
             .order_by("-posted_at")
             .select_related("user")
             .prefetch_related(
-                "upvotes", "downvotes", "notes", "notes__upvotes", "notes__downvotes"
+                "upvotes",
+                "downvotes",
+                "notes",
+                "notes__upvotes",
+                "notes__downvotes",
             )
         ).annotate(
             num_upvotes=Count("upvotes", distinct=True),

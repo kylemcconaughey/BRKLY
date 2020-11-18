@@ -322,12 +322,16 @@ class DiscussionBoardPFSerializer(serializers.ModelSerializer):
 
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
+    def get_notes(self, request, instance):
+        notes = instance.notes.order_by("board__notes__num_upvotes")
+        return NoteSerializer(notes, many=True, context={"request": request}).data
+
     user = EmbeddedUserSerializer()
     num_upvotes = serializers.IntegerField()
     num_downvotes = serializers.IntegerField()
     total_votes = serializers.IntegerField()
     num_notes = serializers.IntegerField()
-    notes = NoteSerializer(many=True)
+    notes = serializers.SerializerMethodField()
 
     class Meta:
         model = DiscussionBoard
