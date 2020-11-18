@@ -273,6 +273,20 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
 
 
+class PostPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            "body",
+            "dog",
+            "image",
+            "posted_at",
+            "font_style",
+            "text_align",
+            "font_size",
+        ]
+
+
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     comments = CommentSerializer(many=True, read_only=True)

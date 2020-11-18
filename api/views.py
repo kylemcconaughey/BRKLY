@@ -31,6 +31,7 @@ from .serializers import (
     MeetupSerializer,
     MessageSerializer,
     PostSerializer,
+    PostPFSerializer,
     ReactionSerializer,
     UserSerializer,
     RequestSerializer,
@@ -408,7 +409,11 @@ class CommentViewSet(ModelViewSet):
 
 
 class PostViewSet(ModelViewSet):
-    serializer_class = PostSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PostPFSerializer
+        return PostSerializer
+
     permission_classes = [
         IsAuthenticated,
         PostMaker,
