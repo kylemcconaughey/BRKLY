@@ -416,7 +416,6 @@ class PostViewSet(ModelViewSet):
 
     permission_classes = [
         IsAuthenticated,
-        PostMaker,
     ]
     parser_classes = [JSONParser, FileUploadParser]
 
