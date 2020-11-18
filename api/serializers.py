@@ -320,7 +320,7 @@ class DiscussionBoardPFSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DiscussionBoard
-        fields = ["title", "body", "user", "posted_at", "url"]
+        fields = ["title", "body", "user", "posted_at"]
 
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
