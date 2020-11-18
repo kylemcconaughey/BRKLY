@@ -553,6 +553,32 @@ class DiscussionBoardViewSet(ModelViewSet):
             num_note_upvotes=Count("notes__upvotes", distinct=True),
         )
 
+    def retrieve(self, request, pk):
+        return (
+            (
+                DiscussionBoard.objects.filter(pk=pk)
+                .select_related("user")
+                .prefetch_related(
+                    "upvotes",
+                    "downvotes",
+                    "notes",
+                    "notes__upvotes",
+                    "notes__downvotes",
+                )
+            )
+            .annotate(
+                num_upvotes=Count("upvotes", distinct=True),
+                num_downvotes=Count("downvotes", distinct=True),
+                total_votes=(
+                    (Count("upvotes", distinct=True))
+                    - (Count("downvotes", distinct=True))
+                ),
+                num_notes=Count("notes", distinct=True),
+                num_note_upvotes=Count("notes__upvotes", distinct=True),
+            )
+            .first()
+        )
+
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
