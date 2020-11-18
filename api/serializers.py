@@ -273,7 +273,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
 
 
-class PostPFSerializer(serializers.ModelSerializer):
+class PostPFSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = [
