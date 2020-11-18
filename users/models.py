@@ -20,7 +20,7 @@ class User(AbstractUser):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    phone_num = models.IntegerField(null=True, blank=True)
+    phone_num = models.CharField(null=True, blank=True, max_length=12)
     phone_is_public = models.BooleanField(null=False, blank=False, default=False)
 
     birthdate = models.DateField(null=True, blank=True)
