@@ -26,6 +26,7 @@ from .serializers import (
     CommentSerializer,
     ConversationSerializer,
     DiscussionBoardSerializer,
+    DiscussionBoardPFSerializer,
     DogSerializer,
     MeetupSerializer,
     MessageSerializer,
@@ -394,12 +395,16 @@ class CommentViewSet(ModelViewSet):
             raise PermissionDenied()
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["POST"])
     def like(self, request, pk):
         comment = self.get_object()
-        comment.liked_by.add(self.request.user)
+        if self.request.user not in comment.liked_by.all():
+            comment.liked_by.add(self.request.user)
+            comment.save()
+            return Response(status=201)
+        comment.liked_by.remove(self.requst.user)
         comment.save()
-        return Response(status=201)
+        return Response(status=204)
 
 
 class PostViewSet(ModelViewSet):
@@ -514,8 +519,17 @@ class PostViewSet(ModelViewSet):
 
 
 class DiscussionBoardViewSet(ModelViewSet):
-    serializer_class = DiscussionBoardSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return DiscussionBoardPFSerializer
+        return DiscussionBoardSerializer
+
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
 
     def get_queryset(self):
         return (

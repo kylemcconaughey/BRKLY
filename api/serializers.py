@@ -13,7 +13,6 @@ from .models import (
     Note,
 )
 from maps.models import Location
-from django.db.models import Q, Count
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -300,7 +299,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Note
         fields = [
@@ -315,6 +313,14 @@ class NoteSerializer(serializers.ModelSerializer):
             "num_downvotes",
             "total_votes",
         ]
+
+
+class DiscussionBoardPFSerializer(serializers.ModelSerializer):
+    user = EmbeddedUserSerializer()
+
+    class Meta:
+        model = DiscussionBoard
+        fields = ["title", "body", "user", "posted_at", "url"]
 
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
