@@ -565,8 +565,7 @@ class DiscussionBoardViewSet(ModelViewSet):
                     "notes__upvotes",
                     "notes__downvotes",
                 )
-            )
-            .annotate(
+            ).annotate(
                 num_upvotes=Count("upvotes", distinct=True),
                 num_downvotes=Count("downvotes", distinct=True),
                 total_votes=(
@@ -576,8 +575,7 @@ class DiscussionBoardViewSet(ModelViewSet):
                 num_notes=Count("notes", distinct=True),
                 num_note_upvotes=Count("notes__upvotes", distinct=True),
             )
-            .first()
-        )
+        ).first()
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
