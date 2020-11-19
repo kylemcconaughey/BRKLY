@@ -273,6 +273,20 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
 
 
+class PostPFSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            "body",
+            "dog",
+            "image",
+            "posted_at",
+            "font_style",
+            "text_align",
+            "font_size",
+        ]
+
+
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     comments = CommentSerializer(many=True, read_only=True)
@@ -315,12 +329,35 @@ class NoteSerializer(serializers.ModelSerializer):
         ]
 
 
-class DiscussionBoardPFSerializer(serializers.ModelSerializer):
-    user = EmbeddedUserSerializer()
+class NotePFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = [
+            "body",
+            "board",
+        ]
+
+
+class EmbeddedNoteSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
 
     class Meta:
+        model = Note
+        fields = [
+            "url",
+            "body",
+            "user",
+            "posted_at",
+            "num_upvotes",
+            "num_downvotes",
+            "total_votes",
+        ]
+
+
+class DiscussionBoardPFSerializer(serializers.ModelSerializer):
+    class Meta:
         model = DiscussionBoard
-        fields = ["title", "body", "user", "posted_at"]
+        fields = ["title", "body", "posted_at"]
 
 
 class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
@@ -329,12 +366,13 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     num_downvotes = serializers.IntegerField()
     total_votes = serializers.IntegerField()
     num_notes = serializers.IntegerField()
-    notes = NoteSerializer(many=True)
+    notes = EmbeddedNoteSerializer(many=True)
 
     class Meta:
         model = DiscussionBoard
         fields = [
             "url",
+            "id",
             "title",
             "body",
             "user",
@@ -342,8 +380,8 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
-            "notes",
             "num_notes",
+            "notes",
         ]
 
 
