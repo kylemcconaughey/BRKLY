@@ -24,6 +24,7 @@ from .models import (
 from maps.models import Location
 from .serializers import (
     CommentSerializer,
+    CommentPFSerializer,
     ConversationSerializer,
     DiscussionBoardSerializer,
     DiscussionBoardPFSerializer,
@@ -380,7 +381,11 @@ class ReactionViewSet(ModelViewSet):
 
 
 class CommentViewSet(ModelViewSet):
-    serializer_class = CommentSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CommentPFSerializer
+        return CommentSerializer
+
     permission_classes = [
         IsAuthenticated,
     ]
