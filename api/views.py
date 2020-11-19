@@ -38,6 +38,7 @@ from .serializers import (
     LocationSerializer,
     UserSearchSerializer,
     NoteSerializer,
+    NotePFSerializer,
 )
 
 """
@@ -611,11 +612,20 @@ class LocationViewSet(ModelViewSet):
 
 
 class NoteViewSet(ModelViewSet):
-    serializer_class = NoteSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return NotePFSerializer
+        return NoteSerializer
+
     permission_classes = [IsAuthenticated, PostMaker]
 
     def get_queryset(self):
         return Note.objects.all().order_by("-posted_at")
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):

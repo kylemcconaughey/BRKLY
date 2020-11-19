@@ -329,6 +329,15 @@ class NoteSerializer(serializers.ModelSerializer):
         ]
 
 
+class NotePFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = [
+            "body",
+            "board",
+        ]
+
+
 class EmbeddedNoteSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
 
