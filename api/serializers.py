@@ -329,6 +329,22 @@ class NoteSerializer(serializers.ModelSerializer):
         ]
 
 
+class EmbeddedNoteSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
+    class Meta:
+        model = Note
+        fields = [
+            "url",
+            "body",
+            "user",
+            "posted_at",
+            "num_upvotes",
+            "num_downvotes",
+            "total_votes",
+        ]
+
+
 class DiscussionBoardPFSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscussionBoard
@@ -341,7 +357,7 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
     num_downvotes = serializers.IntegerField()
     total_votes = serializers.IntegerField()
     num_notes = serializers.IntegerField()
-    notes = NoteSerializer(many=True)
+    notes = EmbeddedNoteSerializer(many=True)
 
     class Meta:
         model = DiscussionBoard
@@ -354,8 +370,8 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
-            "notes",
             "num_notes",
+            "notes",
         ]
 
 
