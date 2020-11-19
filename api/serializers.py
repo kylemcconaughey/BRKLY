@@ -372,6 +372,7 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
         model = DiscussionBoard
         fields = [
             "url",
+            "id",
             "title",
             "body",
             "user",
