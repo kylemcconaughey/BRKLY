@@ -186,14 +186,23 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 MAPBOX_KEY = env("MAPBOX_KEY")
 
-ASGI_APPLICATION = "project.asgi.application"
-
+ASGI_APPLICATION = "project.routing.application"
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('localhost', 6379)],
-        },
-        'ROUTING': 'api.routing.channel_routing',
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
+if env('USE_REDIS'):
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [env('REDIS_URL')],
+            },
+        },
+    }
+
+import django_heroku
+django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']

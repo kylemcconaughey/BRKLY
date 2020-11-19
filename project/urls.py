@@ -25,7 +25,11 @@ urlpatterns = [
     path("auth/", include("djoser.urls.authtoken")),
     path("", include("api.urls")),
     path('maps/', include('maps.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    path('', views.homepage, name='homepage'),
+    path('notifications/', views.boops, name='notifications'),
+    path('notification/<int:recipient_pk>/', views.send_notification, name='send_notification'),
+]
 
 if settings.DEBUG:
     import debug_toolbar

@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -615,3 +616,21 @@ class NoteViewSet(ModelViewSet):
 
 def user_list(request):
     return render (request, 'user_list.html')
+
+@login_required
+def homepage(request):
+    users = User.objects.all()
+    return render(request, "homepage.html", {"users": users})
+
+
+@login_required
+def notifications(request):
+    return render(request, "notifications.html")
+
+
+@login_required
+def send_notification(request, recipient_pk):
+    recipient = get_object_or_404(User, pk=recipient_pk)
+
+    request.user.sent_notifications.create(recipient=recipient)
+    return redirect(to='homepage')
