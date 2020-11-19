@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Q, Count
 from users.models import User
 from .models import (
     DiscussionBoard,
@@ -330,10 +331,14 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class EmbeddedNoteSerializer(serializers.ModelSerializer):
+
+    url = serializers.HyperlinkedRelatedField()
+
     class Meta:
         model = Note
         fields = [
             "url",
+            "id",
             "body",
             "user",
             "posted_at",
@@ -349,13 +354,7 @@ class DiscussionBoardPFSerializer(serializers.ModelSerializer):
         fields = ["title", "body", "posted_at"]
 
 
-class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
-    def get_notes(self, request):
-        notes = request.notes.order_by("-num_upvotes")
-        return EmbeddedNoteSerializer(
-            notes, many=True, context={"request": request}
-        ).data
-
+class DiscussionBoardSerializer(serializers.ModelSerializer):
     user = EmbeddedUserSerializer()
     num_upvotes = serializers.IntegerField()
     num_downvotes = serializers.IntegerField()
@@ -377,6 +376,16 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "notes",
             "num_notes",
         ]
+
+    def get_notes(self, request):
+        notes = Note.objects.annotate(
+            total_votes=(
+                (Count("upvotes", distinct=True)) - (Count("downvotes", distinct=True))
+            )
+        ).order_by("-total_votes")
+        return EmbeddedNoteSerializer(
+            notes, many=True, context={"request": request}
+        ).data
 
 
 class UserSearchSerializer(serializers.ModelSerializer):
