@@ -22,9 +22,11 @@ api_router.register(
 )
 api_router.register("locations", api_views.LocationViewSet, basename="location")
 api_router.register("notes", api_views.NoteViewSet, basename="note")
+# api_router.register("homepage", api_views.NoteViewSet, basename='homepage')
+# api_router.register("notifications", api_views.NoteViewSet, basename="notifications")
 
 
 urlpatterns = [
     path("", include(api_router.urls)),
-    path('user_list', api_views.user_list, name='user_list'),
+
 ]

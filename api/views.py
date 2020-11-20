@@ -654,15 +654,13 @@ class NoteViewSet(ModelViewSet):
         note.save()
         return Response(status=204)
 
-def user_list(request):
-    return render (request, 'user_list.html')
-
+# make homepage viewset and serializer?
 @login_required
 def homepage(request):
     users = User.objects.all()
     return render(request, "homepage.html", {"users": users})
 
-
+# make notification viewset and serializer?
 @login_required
 def notifications(request):
     return render(request, "notifications.html")

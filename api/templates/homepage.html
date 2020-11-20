@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>Make Notifications</h1>
-<div><a href="{% url 'notifications' %}">Watch notifications</a></div>
+<div><a href="{% url 'notifications' %}">View Notifications</a></div>
 
 <div class="flex">
   <div>
@@ -13,7 +13,7 @@
         <div>
           <form action="{% url 'send_notification' recipient_pk=user.pk %}" method="POST">
             {% csrf_token %}
-            <button type="submit">Send notification</button>
+            <button type="submit">Send Notification</button>
           </form>
         </div>
       </div>
