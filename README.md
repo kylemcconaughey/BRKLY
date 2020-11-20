@@ -1,8 +1,8 @@
-# [BRKLY: Backend API] (https://brkly.herokuapp.com/) ![Barkley Logo](Screen Shot 2020-11-20 at 10.20.49 AM)
+# [BRKLY: Backend API](https://brkly.herokuapp.com/)
 
 ## BRKLY is a REST API built with Django, for use with the Barkley front-end app using React. 
 
-The API allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed. 
+The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed.
 
 ### Models that exist
 | Model | Notes |
