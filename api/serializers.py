@@ -331,11 +331,9 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class EmbeddedNoteSerializer(serializers.ModelSerializer):
-
-    url = serializers.HyperlinkedRelatedField()
-
     class Meta:
         model = Note
+
         fields = [
             "url",
             "id",
@@ -360,7 +358,7 @@ class DiscussionBoardSerializer(serializers.ModelSerializer):
     num_downvotes = serializers.IntegerField()
     total_votes = serializers.IntegerField()
     num_notes = serializers.IntegerField()
-    notes = serializers.SerializerMethodField()
+    notes = EmbeddedNoteSerializer(many=True)
 
     class Meta:
         model = DiscussionBoard
@@ -377,15 +375,11 @@ class DiscussionBoardSerializer(serializers.ModelSerializer):
             "num_notes",
         ]
 
-    def get_notes(self, request):
-        notes = Note.objects.annotate(
-            total_votes=(
-                (Count("upvotes", distinct=True)) - (Count("downvotes", distinct=True))
-            )
-        ).order_by("-total_votes")
-        return EmbeddedNoteSerializer(
-            notes, many=True, context={"request": request}
-        ).data
+    # def get_notes(self, request):
+
+    #     return EmbeddedNoteSerializer(
+    #         notes, many=True, context={"request": request}
+    #     ).data
 
 
 class UserSearchSerializer(serializers.ModelSerializer):
