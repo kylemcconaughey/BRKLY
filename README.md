@@ -53,3 +53,72 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 | TBD | `/user_list/` | Websockets coming soon! | But boy is it hard! |
 
 ---------------------------------------------------------------
+
+## Model Construction
+
+### User
+```
+{
+    "first_name": CharField
+    "last_name": CharField
+    "last_name_is_public": BooleanField
+    "num_pets": IntegerField
+    "street_address": CharField
+    "address_is_public": BooleanField
+    "city": CharField
+    "state": CharField
+    "created_at": DateTimeField
+    "phone_num": CharField
+    "phone_is_public": BooleanField
+    "birthdate": DateField
+    "picture": ImageField
+    "followers": ManyToManyField
+    "friends": ManyToManyField
+}
+```
+
+### Dog
+```
+{
+    "owner": ForeignKey(to=User)
+    "name": CharField
+    "breed": CharField
+    "picture": ImageField
+    "age": IntegerField
+    "created_at": DateTimeField
+    "size": CharField/TextChoices
+    "energy": CharField/TextChoices
+    "temper": CharField/TextChoices
+    "group_size": CharField/TextChoices
+    "vaccinated": CharField/TextChoices
+    "kid_friendly": CharField/TextChoices
+}
+```
+
+### Conversation
+
+
+### Message
+
+
+### Meetup
+
+
+### DiscussionBoard
+
+
+### Note
+
+
+### Post
+
+
+### Comment
+
+
+### Reaction
+
+
+### Request
+
+
