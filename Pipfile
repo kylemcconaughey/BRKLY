@@ -26,7 +26,7 @@ boto3 = "*"
 django-storages = "*"
 django-mapbox-location-field = "*"
 channels = "*"
-asgi-redis = "*"
+
 
 [requires]
 python_version = "3.8"

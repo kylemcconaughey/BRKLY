@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
+from api import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,12 +25,11 @@ urlpatterns = [
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
     path("", include("api.urls")),
-    path('maps/', include('maps.urls')),
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-    path('', views.homepage, name='homepage'),
-    path('notifications/', views.boops, name='notifications'),
+    path('maps/', include('maps.urls')), 
+    path('homepage/', views.homepage, name='homepage'),
+    path('notifications/', views.notifications, name='notifications'),
     path('notification/<int:recipient_pk>/', views.send_notification, name='send_notification'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     import debug_toolbar
