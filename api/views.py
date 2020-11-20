@@ -24,6 +24,7 @@ from .models import (
 from maps.models import Location
 from .serializers import (
     CommentSerializer,
+    CommentPFSerializer,
     ConversationSerializer,
     DiscussionBoardSerializer,
     DiscussionBoardPFSerializer,
@@ -38,6 +39,7 @@ from .serializers import (
     LocationSerializer,
     UserSearchSerializer,
     NoteSerializer,
+    NotePFSerializer,
 )
 
 """
@@ -379,7 +381,11 @@ class ReactionViewSet(ModelViewSet):
 
 
 class CommentViewSet(ModelViewSet):
-    serializer_class = CommentSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CommentPFSerializer
+        return CommentSerializer
+
     permission_classes = [
         IsAuthenticated,
     ]
@@ -416,7 +422,6 @@ class PostViewSet(ModelViewSet):
 
     permission_classes = [
         IsAuthenticated,
-        PostMaker,
     ]
     parser_classes = [JSONParser, FileUploadParser]
 
@@ -558,6 +563,32 @@ class DiscussionBoardViewSet(ModelViewSet):
             num_note_upvotes=Count("notes__upvotes", distinct=True),
         )
 
+    def retrieve(self, request, pk):
+        board = (
+            DiscussionBoard.objects.filter(pk=pk)
+            .select_related("user")
+            .prefetch_related(
+                "upvotes",
+                "downvotes",
+                "notes",
+                "notes__upvotes",
+                "notes__downvotes",
+            )
+            .annotate(
+                num_upvotes=Count("upvotes", distinct=True),
+                num_downvotes=Count("downvotes", distinct=True),
+                total_votes=(
+                    (Count("upvotes", distinct=True))
+                    - (Count("downvotes", distinct=True))
+                ),
+                num_notes=Count("notes", distinct=True),
+                num_note_upvotes=Count("notes__upvotes", distinct=True),
+            )
+            .first()
+        )
+        serializer = DiscussionBoardSerializer(board, context={"request": request})
+        return Response(serializer.data)
+
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):
         board = DiscussionBoard.objects.filter(pk=pk).first()
@@ -590,11 +621,20 @@ class LocationViewSet(ModelViewSet):
 
 
 class NoteViewSet(ModelViewSet):
-    serializer_class = NoteSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return NotePFSerializer
+        return NoteSerializer
+
     permission_classes = [IsAuthenticated, PostMaker]
 
     def get_queryset(self):
         return Note.objects.all()
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
 
     @action(detail=True, methods=["POST"])
     def upvote(self, request, pk):

@@ -265,6 +265,24 @@ class MeetupSerializer(serializers.ModelSerializer):
         ]
 
 
+class CommentPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            "post",
+            "body",
+        ]
+
+
+class EmbeddedCommentSerializer(serializers.ModelSerializer):
+    user = EmbeddedUserSerializer()
+    liked_by = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["user", "body", "url", "posted_at", "liked_by"]
+
+
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
@@ -274,7 +292,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
 
 
-class PostPFSerializer(serializers.ModelSerializer):
+class PostPFSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = [
@@ -290,7 +308,7 @@ class PostPFSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = EmbeddedCommentSerializer(many=True, read_only=True)
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
     reactions = ReactionSerializer(many=True)
 
@@ -330,13 +348,22 @@ class NoteSerializer(serializers.ModelSerializer):
         ]
 
 
-class EmbeddedNoteSerializer(serializers.ModelSerializer):
+class NotePFSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
+        fields = [
+            "body",
+            "board",
+        ]
 
+
+class EmbeddedNoteSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
+    class Meta:
+        model = Note
         fields = [
             "url",
-            "id",
             "body",
             "user",
             "posted_at",
@@ -364,6 +391,7 @@ class DiscussionBoardSerializer(serializers.ModelSerializer):
         model = DiscussionBoard
         fields = [
             "url",
+            "id",
             "title",
             "body",
             "user",
@@ -371,8 +399,8 @@ class DiscussionBoardSerializer(serializers.ModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
-            "notes",
             "num_notes",
+            "notes",
         ]
 
     # def get_notes(self, request):
