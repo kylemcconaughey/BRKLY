@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.db.models import Q, Count
 from users.models import User
 from .models import (
     DiscussionBoard,
