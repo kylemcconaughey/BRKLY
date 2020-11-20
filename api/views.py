@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count, Prefetch
+from django.db.models import Q, Count, Prefetch, F
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.decorators import action
@@ -94,14 +94,8 @@ class DogViewSet(ModelViewSet):
 
     def retrieve(self, request, pk):
         dog = (
-            (
-                Dog.objects.filter(pk=pk)
-                .select_related("owner")
-                .prefetch_related("posts")
-            )
-            .annotate(num_posts=Count("posts", distinct=True))
-            .first()
-        )
+            Dog.objects.filter(pk=pk).select_related("owner").prefetch_related("posts")
+        ).first()
         serializer = DogSerializer(dog, context={"request": request})
         return Response(serializer.data)
 
@@ -547,9 +541,21 @@ class DiscussionBoardViewSet(ModelViewSet):
             .order_by("-posted_at")
             .select_related("user")
             .prefetch_related(
+                (
+                    Prefetch(
+                        "notes",
+                        queryset=Note.objects.annotate(
+                            total_votes=(
+                                (Count("upvotes", distinct=True))
+                                - (Count("downvotes", distinct=True))
+                            ),
+                        )
+                        .order_by("-total_votes", "-num_upvotes", "num_downvotes")
+                        .distinct(),
+                    )
+                ),
                 "upvotes",
                 "downvotes",
-                "notes",
                 "notes__upvotes",
                 "notes__downvotes",
             )
@@ -568,9 +574,21 @@ class DiscussionBoardViewSet(ModelViewSet):
             DiscussionBoard.objects.filter(pk=pk)
             .select_related("user")
             .prefetch_related(
+                (
+                    Prefetch(
+                        "notes",
+                        queryset=Note.objects.annotate(
+                            total_votes=(
+                                (Count("upvotes", distinct=True))
+                                - (Count("downvotes", distinct=True))
+                            ),
+                        )
+                        .order_by("-total_votes", "-num_upvotes", "num_downvotes")
+                        .distinct(),
+                    )
+                ),
                 "upvotes",
                 "downvotes",
-                "notes",
                 "notes__upvotes",
                 "notes__downvotes",
             )

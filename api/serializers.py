@@ -42,7 +42,6 @@ class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
 
 class DogSerializer(serializers.ModelSerializer):
     owner = EmbeddedUserSerializer()
-    num_posts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Dog
@@ -60,7 +59,6 @@ class DogSerializer(serializers.ModelSerializer):
             "group_size",
             "vaccinated",
             "kid_friendly",
-            "num_posts",
         ]
 
 
@@ -332,6 +330,10 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
+    upvotes = serializers.SlugRelatedField(
+        slug_field="username", many=True, read_only=True
+    )
+
     class Meta:
         model = Note
         fields = [
