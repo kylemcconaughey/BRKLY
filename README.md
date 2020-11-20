@@ -1,6 +1,6 @@
 # [BRKLY: Backend API](https://brkly.herokuapp.com/)
 ![Barkley Logo](https://brkly.s3.amazonaws.com/post_images/barkley_logo.png)
-## BRKLY is a REST API built with Django, for use with the Barkley front-end app using React. 
+## BRKLY is a REST API built with Django, for use with the [Barkley](http://barkley.netlify.app/) front-end app using React. 
 
 The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed.
 
@@ -96,29 +96,106 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 ```
 
 ### Conversation
-
+```
+{
+    "members": ManyToManyField(to=User)
+    "created_at": DateTimeField
+    "convo_name": CharField
+    "admin": ForeignKey(to=User)  - auto adds `self.request.user` upon creation
+}
+```
 
 ### Message
-
+```
+{
+    "sender": ForeignKey(to=User)
+    "conversation": ForeignKey(to=Conversation)
+    "time_sent": DateTimeField
+    "body": TextField
+    "reactions": ManyToManyField(to=Reaction)
+    "image": ImageField
+    "read_by": ManyToManyField(to=User)
+}
+```
 
 ### Meetup
-
+```
+{
+    "admin": ForeignKey(to=User)
+    "attending": ManyToManyField(to=User)
+    "start_time": DateTimeField
+    "end_time": DateTimeField
+    "location": ForeignKey(to=Location)
+}
+```
 
 ### DiscussionBoard
-
+```
+{
+    "title": CharField
+    "body": TextField
+    "user": ForeignKey(to=User)
+    "posted_at": DateTimeField
+    "upvotes": ManyToManyField(to=User)
+    "downvotes": ManyToManyField(to=User)
+}
+```
 
 ### Note
-
+```
+{
+    "body": TextField
+    "board": ForeignKey(to=DiscussionBoard)
+    "user": ForeignKey(to=User)
+    "posted_at": DateTimeField
+    "upvotes": ManyToManyField(to=User)
+    "downvotes": ManyToManyField(to=User)
+    "num_upvotes": IntegerField
+    "num_downvotes": IntegerField
+    "def total_votes": returns self.num_upvotes - self.num_downvotes
+}
+```
 
 ### Post
-
+```
+{
+    "body": CharField
+    "dog": ForeignKey(to=Dog)
+    "posted_at": DateTimeField
+    "user": ForeignKey(to=User)
+    "font_style": CharField/TextChoices
+    "text_align": CharField/TextChoices
+    "font_size": CharField/TextChoices
+    "image": ImageField
+    "liked_by": ManyToManyField(to=User)
+    "reactions": ManyToManyField(to=Reaction)
+}
+```
 
 ### Comment
-
+```
+{
+    "body": CharField
+    "post": ForeignKey(to=Post)
+    "user": ForeignKey(to=User)
+    "posted_at": DateTimeField
+    "liked_by": ManyToManyField(to=User)
+}
+```
 
 ### Reaction
-
+```
+{
+    "reaction": CharField
+    "user": ForeignKey(to=User)
+}
+```
 
 ### Request
-
-
+```
+{
+    "proposing": ForeignKey(to=User)
+    "receiving": ForeignKey(to=User)
+    "accepted": BooleanField
+}
+```
