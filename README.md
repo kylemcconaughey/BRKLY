@@ -1,8 +1,10 @@
 # [BRKLY: Backend API](https://brkly.herokuapp.com/)
-
+![Barkley Logo](/Users/kylemcconaughey/Desktop/barkley_logo.png)
 ## BRKLY is a REST API built with Django, for use with the Barkley front-end app using React. 
 
 The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed.
+
+---------------------------------------------------------------
 
 ### Models that exist
 | Model | Notes |
@@ -19,6 +21,7 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 | Reaction | Reaction is a CharField |
 | Request | proposing=`self.request.user`, recieving=`/users/<pk>/` |
 
+---------------------------------------------------------------
 
 ### Endpoints: 
 | HTTP Method | Endpoint | Result | Notes |
@@ -48,3 +51,5 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 | POST | `/notes/<note_db>/upvote/` | Adds `self.request.user` to note's upvotes M2M field | Removes `self.request.user` if already upvoted |  |
 | POST | `/notes/<note_db>/downvote/` | Same as above but with downvotes |  |
 | TBD | `/user_list/` | Websockets coming soon! | But boy is it hard! |
+
+---------------------------------------------------------------
