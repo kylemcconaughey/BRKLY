@@ -9,17 +9,17 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 ### Models that exist
 | Model | Notes |
 | ----- | ----- |
-| User |  |
-| Dog | <3 |
-| Conversation |  |
-| Message |  |
-| Meetup |  |
-| DiscussionBoard | Posting requires just the title & body |
-| Note | Notes go on discussion boards, displayed in order of `total_votes` |
-| Post | Foreign key to user and dog |
-| Comment | Requires `post` and `body` |
-| Reaction | Reaction is a CharField |
-| Request | proposing=`self.request.user`, recieving=`/users/<pk>/` |
+| [User](https://brkly.herokuapp.com/users/) |  |
+| [Dog](https://brkly.herokuapp.com/dogs/) | <3 |
+| [Conversation](https://brkly.herokuapp.com/conversations/) |  |
+| [Message](https://brkly.herokuapp.com/messages/) |  |
+| [Meetup](https://brkly.herokuapp.com/meetups/) |  |
+| [DiscussionBoard](https://brkly.herokuapp.com/discussionboards/) | Posting requires just the title & body |
+| [Note](https://brkly.herokuapp.com/notes/) | Notes go on discussion boards, displayed in order of `total_votes` |
+| [Post](https://brkly.herokuapp.com/posts/) | Foreign key to user and dog |
+| [Comment](https://brkly.herokuapp.com/comments/) | Requires `post` and `body` |
+| [Reaction](https://brkly.herokuapp.com/reactions/) | Reaction is a CharField |
+| [Request](https://brkly.herokuapp.com/requests/) | proposing=`self.request.user`, recieving=`/users/<pk>/` |
 
 ---------------------------------------------------------------
 
@@ -33,7 +33,7 @@ The [BRKLY API](https://brkly.herokuapp.com/) allows users to create dog and own
 | GET | `/admin/` | Not so much for the API |  |
 | POST | `/users/<user_pk>/follow/` | Adds self.request.user to `user_pk`'s follower list |  |
 | POST | `/users/<user_pk>/unfollow/` | Removes `self.request.user` from `user_pk`'s follower list |  |
-| POST | `/users/<user_pk>/request/ | Creates a `Request` object with `self.request.user` as proposing & `<user_pk>` as recieving |  |
+| POST | `/users/<user_pk>/request/` | Creates a `Request` object with `self.request.user` as proposing & `<user_pk>` as recieving |  |
 | POST | `/users/<user_pk>/unfriend/` | Removes `<user_pk>` from `self.request.user`'s friend's list (it's symmetrical=True), deletes 'Request' object instance |  |
 | GET | `/users/search/?q=<search term>` | Returns a list of all users with `search term` in their user/first/last/dog's name |  |
 | GET | `/dogs/name_search/?=<search tearm>` | Returns a list of all dogs with names that match `search term` |  |
