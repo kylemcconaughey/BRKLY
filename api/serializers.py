@@ -67,6 +67,12 @@ class EmbeddedDogSerializer(serializers.ModelSerializer):
         fields = ["name", "url", "picture"]
 
 
+class MessagePFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ["body", "image"]
+
+
 class EmbeddedMessageSerializer(serializers.ModelSerializer):
     sender = EmbeddedUserSerializer()
     reactions = serializers.StringRelatedField(many=True, read_only=True)

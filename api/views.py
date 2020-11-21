@@ -31,6 +31,7 @@ from .serializers import (
     DogSerializer,
     MeetupSerializer,
     MessageSerializer,
+    MessagePFSerializer,
     PostSerializer,
     PostPFSerializer,
     ReactionSerializer,
@@ -257,6 +258,18 @@ class ConversationViewSet(ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
 
+    @action(detail=True, methods=["POST"])
+    def message(self, request, pk):
+        convo = Conversation.objects.filter(pk=pk).first()
+        if self.request.user not in convo.members.all():
+            raise PermissionDenied()
+        message = Message.objects.create(
+            sender=self.request.user, conversation=convo, body=request.data["body"]
+        )
+        message.read_by.add(self.request.user)
+        message.save()
+        return Response(status=201)
+
     def get_queryset(self):
         return (
             Conversation.objects.all()
@@ -333,7 +346,11 @@ class RequestViewSet(ModelViewSet):
 
 
 class MessageViewSet(ModelViewSet):
-    serializer_class = MessageSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return MessagePFSerializer
+        return MessageSerializer
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -346,7 +363,7 @@ class MessageViewSet(ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
             raise PermissionDenied()
-        serializer.save(sender=self.request.user, read_by=self.request.user)
+        serializer.save(sender=self.request.user)
 
     @action(detail=True, methods=["POST"])
     def read(self, request, pk):
