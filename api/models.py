@@ -280,10 +280,10 @@ class Note(models.Model):
 class Notification(TimeStampedModel, models.Model):
     sender = models.ForeignKey(to=User,
                                on_delete=models.CASCADE,
-                               related_name="sent_notification")
+                               related_name="sent_notifications")
     recipient = models.ForeignKey(to=User,
                                   on_delete=models.CASCADE,
-                                  related_name="received_notification")
+                                  related_name="received_notifications")
 
 
 @receiver(post_save, sender=Notification)

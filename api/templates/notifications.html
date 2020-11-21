@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <h1>Notifications</h1>
+
 
 <div>
   <button id="test-button">Test</button>
@@ -9,6 +11,8 @@
 
 <ul id="notificationlist">
 </ul>
+
+<div><a href="{% url 'homepage' %}">Back to Homepage</a></div>
 
 <script>
 const notificationSocket = new WebSocket(
