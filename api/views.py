@@ -761,3 +761,14 @@ class NotificationViewSet(ModelViewSet):
             notification.save()
             return Response(status=200)
         raise PermissionDenied()
+
+    """
+    If we decide that having notification objects created for each message (and then having them stick around) is too much clutter, we can have `opening` them just delete the notification object instead. 
+    """
+    # @action(detail=True, methods=["POST"])
+    # def open(self, request, pk):
+    #     notification = Notification.objects.filter(pk=pk).first()
+    #     if notification.recipient == self.request.user:
+    #         notification.delete()
+    #         return Response(status=204)
+    #     raise PermissionDenied()
