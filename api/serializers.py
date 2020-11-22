@@ -41,7 +41,6 @@ class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
 
 class DogSerializer(serializers.ModelSerializer):
     owner = EmbeddedUserSerializer()
-    num_posts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Dog
@@ -59,7 +58,6 @@ class DogSerializer(serializers.ModelSerializer):
             "group_size",
             "vaccinated",
             "kid_friendly",
-            "num_posts",
         ]
 
 
@@ -67,6 +65,12 @@ class EmbeddedDogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
         fields = ["name", "url", "picture"]
+
+
+class MessagePFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ["body", "image"]
 
 
 class EmbeddedMessageSerializer(serializers.ModelSerializer):
@@ -264,6 +268,24 @@ class MeetupSerializer(serializers.ModelSerializer):
         ]
 
 
+class CommentPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            "post",
+            "body",
+        ]
+
+
+class EmbeddedCommentSerializer(serializers.ModelSerializer):
+    user = EmbeddedUserSerializer()
+    liked_by = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["user", "body", "url", "posted_at", "liked_by"]
+
+
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
@@ -289,7 +311,7 @@ class PostPFSerializer(serializers.HyperlinkedModelSerializer):
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     user = EmbeddedUserSerializer()
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = EmbeddedCommentSerializer(many=True, read_only=True)
     liked_by = serializers.StringRelatedField(many=True, read_only=True)
     reactions = ReactionSerializer(many=True)
 
@@ -313,6 +335,10 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
+    upvotes = serializers.SlugRelatedField(
+        slug_field="username", many=True, read_only=True
+    )
+
     class Meta:
         model = Note
         fields = [
@@ -360,7 +386,7 @@ class DiscussionBoardPFSerializer(serializers.ModelSerializer):
         fields = ["title", "body", "posted_at"]
 
 
-class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
+class DiscussionBoardSerializer(serializers.ModelSerializer):
     user = EmbeddedUserSerializer()
     num_upvotes = serializers.IntegerField()
     num_downvotes = serializers.IntegerField()
@@ -383,6 +409,12 @@ class DiscussionBoardSerializer(serializers.HyperlinkedModelSerializer):
             "num_notes",
             "notes",
         ]
+
+    # def get_notes(self, request):
+
+    #     return EmbeddedNoteSerializer(
+    #         notes, many=True, context={"request": request}
+    #     ).data
 
 
 class UserSearchSerializer(serializers.ModelSerializer):

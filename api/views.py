@@ -1,7 +1,8 @@
-from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Prefetch, Q
+from django.shortcuts import get_object_or_404, redirect, render
+from maps.models import Location
 from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -10,6 +11,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthentic
 from rest_framework.views import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
+
 from .models import (
     Comment,
     Conversation,
@@ -17,29 +19,30 @@ from .models import (
     Dog,
     Meetup,
     Message,
+    Note,
     Post,
     Reaction,
     Request,
-    Note,
 )
-from maps.models import Location
 from .serializers import (
+    CommentPFSerializer,
     CommentSerializer,
     ConversationSerializer,
-    DiscussionBoardSerializer,
     DiscussionBoardPFSerializer,
+    DiscussionBoardSerializer,
     DogSerializer,
-    MeetupSerializer,
-    MessageSerializer,
-    PostSerializer,
-    PostPFSerializer,
-    ReactionSerializer,
-    UserSerializer,
-    RequestSerializer,
     LocationSerializer,
-    UserSearchSerializer,
-    NoteSerializer,
+    MeetupSerializer,
+    MessagePFSerializer,
+    MessageSerializer,
     NotePFSerializer,
+    NoteSerializer,
+    PostPFSerializer,
+    PostSerializer,
+    ReactionSerializer,
+    RequestSerializer,
+    UserSearchSerializer,
+    UserSerializer,
 )
 
 """
@@ -94,14 +97,8 @@ class DogViewSet(ModelViewSet):
 
     def retrieve(self, request, pk):
         dog = (
-            (
-                Dog.objects.filter(pk=pk)
-                .select_related("owner")
-                .prefetch_related("posts")
-            )
-            .annotate(num_posts=Count("posts", distinct=True))
-            .first()
-        )
+            Dog.objects.filter(pk=pk).select_related("owner").prefetch_related("posts")
+        ).first()
         serializer = DogSerializer(dog, context={"request": request})
         return Response(serializer.data)
 
@@ -263,6 +260,18 @@ class ConversationViewSet(ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
 
+    @action(detail=True, methods=["POST"])
+    def message(self, request, pk):
+        convo = Conversation.objects.filter(pk=pk).first()
+        if self.request.user not in convo.members.all():
+            raise PermissionDenied()
+        message = Message.objects.create(
+            sender=self.request.user, conversation=convo, body=request.data["body"]
+        )
+        message.read_by.add(self.request.user)
+        message.save()
+        return Response(status=201)
+
     def get_queryset(self):
         return (
             Conversation.objects.all()
@@ -339,7 +348,11 @@ class RequestViewSet(ModelViewSet):
 
 
 class MessageViewSet(ModelViewSet):
-    serializer_class = MessageSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return MessagePFSerializer
+        return MessageSerializer
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -352,7 +365,7 @@ class MessageViewSet(ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
             raise PermissionDenied()
-        serializer.save(sender=self.request.user, read_by=self.request.user)
+        serializer.save(sender=self.request.user)
 
     @action(detail=True, methods=["POST"])
     def read(self, request, pk):
@@ -381,7 +394,11 @@ class ReactionViewSet(ModelViewSet):
 
 
 class CommentViewSet(ModelViewSet):
-    serializer_class = CommentSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CommentPFSerializer
+        return CommentSerializer
+
     permission_classes = [
         IsAuthenticated,
     ]
@@ -543,7 +560,23 @@ class DiscussionBoardViewSet(ModelViewSet):
             .order_by("-posted_at")
             .select_related("user")
             .prefetch_related(
-                "upvotes", "downvotes", "notes", "notes__upvotes", "notes__downvotes"
+                (
+                    Prefetch(
+                        "notes",
+                        queryset=Note.objects.annotate(
+                            total_votes=(
+                                (Count("upvotes", distinct=True))
+                                - (Count("downvotes", distinct=True))
+                            ),
+                        )
+                        .order_by("-total_votes", "-num_upvotes", "num_downvotes")
+                        .distinct(),
+                    )
+                ),
+                "upvotes",
+                "downvotes",
+                "notes__upvotes",
+                "notes__downvotes",
             )
         ).annotate(
             num_upvotes=Count("upvotes", distinct=True),
@@ -560,9 +593,21 @@ class DiscussionBoardViewSet(ModelViewSet):
             DiscussionBoard.objects.filter(pk=pk)
             .select_related("user")
             .prefetch_related(
+                (
+                    Prefetch(
+                        "notes",
+                        queryset=Note.objects.annotate(
+                            total_votes=(
+                                (Count("upvotes", distinct=True))
+                                - (Count("downvotes", distinct=True))
+                            ),
+                        )
+                        .order_by("-total_votes", "-num_upvotes", "num_downvotes")
+                        .distinct(),
+                    )
+                ),
                 "upvotes",
                 "downvotes",
-                "notes",
                 "notes__upvotes",
                 "notes__downvotes",
             )
@@ -621,7 +666,7 @@ class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, PostMaker]
 
     def get_queryset(self):
-        return Note.objects.all().order_by("-posted_at")
+        return Note.objects.all()
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -654,11 +699,13 @@ class NoteViewSet(ModelViewSet):
         note.save()
         return Response(status=204)
 
+
 # make homepage viewset and serializer?
 @login_required
 def homepage(request):
     users = User.objects.all()
     return render(request, "homepage.html", {"users": users})
+
 
 # make notification viewset and serializer?
 @login_required
@@ -671,4 +718,4 @@ def send_notification(request, recipient_pk):
     recipient = get_object_or_404(User, pk=recipient_pk)
 
     request.user.sent_notifications.create(recipient=recipient)
-    return redirect(to='homepage')
+    return redirect(to="homepage")
