@@ -153,6 +153,7 @@ class UserViewSet(ModelViewSet):
                 "friends",
                 "requests_sent",
                 "requests_received",
+                "received_notifications",
             )
             .annotate(
                 num_followers=Count("followers", distinct=True),
@@ -170,6 +171,13 @@ class UserViewSet(ModelViewSet):
                     )
                 )
                 - (Count("messages_read", distinct=True)),
+                notifications=(
+                    Count(
+                        "received_notifications",
+                        filter=Q(received_notifications__opened=False),
+                        distinct=True,
+                    )
+                ),
             )
         )
 
@@ -234,6 +242,7 @@ class UserViewSet(ModelViewSet):
                 "friends",
                 "requests_sent",
                 "requests_received",
+                "received_notifications",
             )
             .annotate(
                 num_followers=Count("followers", distinct=True),
@@ -251,6 +260,13 @@ class UserViewSet(ModelViewSet):
                     )
                 )
                 - (Count("messages_read", distinct=True)),
+                notifications=(
+                    Count(
+                        "received_notifications",
+                        filter=Q(received_notifications__opened=False),
+                        distinct=True,
+                    )
+                ),
             )
             .first()
         )
@@ -719,7 +735,6 @@ def homepage(request):
 # make notification viewset and serializer?
 @login_required
 def notifications(request):
-    messages = Message.objects.all()
     return render(request, "sockets.html")
 
 
@@ -737,3 +752,12 @@ class NotificationViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Notification.objects.all().select_related("sender", "recipient")
+
+    @action(detail=True, methods=["POST"])
+    def open(self, request, pk):
+        notification = Notification.objects.filter(pk=pk).first()
+        if notification.recipient == self.request.user:
+            notification.opened = True
+            notification.save()
+            return Response(status=200)
+        raise PermissionDenied()

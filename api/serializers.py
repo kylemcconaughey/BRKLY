@@ -19,10 +19,11 @@ from maps.models import Location
 class NotificationSerializer(serializers.ModelSerializer):
     sender = serializers.StringRelatedField()
     recipient = serializers.StringRelatedField()
+    url = serializers.HyperlinkedIdentityField(view_name="notifications-detail")
 
     class Meta:
         model = Notification
-        fields = ["sender", "recipient", "created_at"]
+        fields = ["url", "sender", "recipient", "opened", "created_at", "id"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -193,6 +194,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     num_friends = serializers.IntegerField()
     unread_messages = serializers.IntegerField()
     friend_requests = serializers.IntegerField()
+    notifications = serializers.IntegerField()
 
     class Meta:
         model = User
@@ -228,6 +230,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "num_friends",
             "unread_messages",
             "friend_requests",
+            "notifications",
         ]
 
 

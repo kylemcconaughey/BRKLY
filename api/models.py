@@ -285,6 +285,7 @@ class Notification(TimeStampedModel, models.Model):
         to=User, on_delete=models.CASCADE, related_name="received_notifications"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    opened = models.BooleanField(null=False, blank=False, default=False)
 
 
 @receiver(post_save, sender=Notification)
