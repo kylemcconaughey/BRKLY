@@ -22,7 +22,7 @@ api_router.register(
 )
 api_router.register("locations", api_views.LocationViewSet, basename="location")
 api_router.register("notes", api_views.NoteViewSet, basename="note")
-# api_router.register("homepage", api_views.NoteViewSet, basename='homepage')
+api_router.register("websockets", api_views.SocketViewSet, basename="websocket")
 api_router.register(
     "notifications", api_views.NotificationViewSet, basename="notifications"
 )

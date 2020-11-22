@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from maps.models import Location
-from rest_framework import serializers
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, JSONParser
@@ -740,6 +740,13 @@ def homepage(request):
 @login_required
 def notifications(request):
     return render(request, "sockets.html")
+
+
+class SocketViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Notification.objects.all()
+        serializer = NotificationSerializer(queryset, many=True)
+        return render(request, "sockets.html")
 
 
 @login_required
