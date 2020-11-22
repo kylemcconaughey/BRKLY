@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from pathlib import Path
+import django_heroku
 
 import environ
 
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     "users",
     "api",
     "maps",
-    'channels',
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -188,22 +189,20 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 MAPBOX_KEY = env("MAPBOX_KEY")
 
 ASGI_APPLICATION = "project.routing.application"
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL")],
+        },
+    },
 }
 
-if env('USE_REDIS'):
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [env('REDIS_URL')],
-            },
-        },
-    }
 
-import django_heroku
 django_heroku.settings(locals())
-del DATABASES['default']['OPTIONS']['sslmode']
+del DATABASES["default"]["OPTIONS"]["sslmode"]
