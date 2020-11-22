@@ -27,6 +27,7 @@ django-storages = "*"
 django-mapbox-location-field = "*"
 channels = "*"
 channels-redis = "*"
+uvicorn = "*"
 
 [requires]
 python_version = "3.8"
