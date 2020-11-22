@@ -55,11 +55,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "storages",
     "mapbox_location_field",
+    "channels",
+    "channels-reddis",
     # Project-specific
     "users",
     "api",
     "maps",
-    "channels",
 ]
 
 MIDDLEWARE = [
@@ -194,7 +195,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": "https://brkly.herokuapp.com/",
+            "hosts": [env("REDIS_URL")],
         },
     },
 }
