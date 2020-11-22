@@ -81,7 +81,7 @@ class EmbeddedDogSerializer(serializers.ModelSerializer):
 class MessagePFSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ["body", "image"]
+        fields = ["body", "conversation", "image"]
 
 
 class EmbeddedMessageSerializer(serializers.ModelSerializer):

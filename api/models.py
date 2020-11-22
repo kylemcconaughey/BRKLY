@@ -301,17 +301,3 @@ def send_new_notification_message(sender, instance, **kwargs):
             "trigger": instance.trigger,
         },
     )
-
-
-# @receiver(post_save, sender=Conversation)
-# def unread_message_notification(sender, instance, **kwargs):
-#     channel_layer = channels.layers.get_channel_layer()
-#     async_to_sync(channel_layer.group_send)(
-#         f"user-{instance.recipeient.pk}",
-#         {
-#             "type": "notification.create",
-#             "sender": instance.sender.username,
-#             # "sender": instance.messages.first().sender.username,
-#             "recipient": instance.recipient.username,
-#         },
-#     )
