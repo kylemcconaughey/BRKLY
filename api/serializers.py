@@ -410,12 +410,6 @@ class DiscussionBoardSerializer(serializers.ModelSerializer):
             "notes",
         ]
 
-    # def get_notes(self, request):
-
-    #     return EmbeddedNoteSerializer(
-    #         notes, many=True, context={"request": request}
-    #     ).data
-
 
 class UserSearchSerializer(serializers.ModelSerializer):
 

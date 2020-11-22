@@ -278,20 +278,37 @@ class Note(models.Model):
 
 
 class Notification(TimeStampedModel, models.Model):
-    sender = models.ForeignKey(to=User,
-                               on_delete=models.CASCADE,
-                               related_name="sent_notifications")
-    recipient = models.ForeignKey(to=User,
-                                  on_delete=models.CASCADE,
-                                  related_name="received_notifications")
+    sender = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="sent_notifications"
+    )
+    recipient = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="received_notifications"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
-@receiver(post_save, sender=Notification)
-def send_new_notification_message(sender, instance, **kwargs):
+# @receiver(post_save, sender=Notification)
+# def send_new_notification_message(sender, instance, **kwargs):
+#     channel_layer = channels.layers.get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         f"user-{instance.recipient.pk}",
+#         {
+#             "type": "notification.create",
+#             "sender": instance.sender.username,
+#             "recipient": instance.recipient.username,
+#         },
+#     )
+
+
+@receiver(post_save, sender=Conversation)
+def unread_message_notification(sender, instance, **kwargs):
     channel_layer = channels.layers.get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        f"user-{instance.recipient.pk}", {
+        f"user-{instance.recipeient.pk}",
+        {
             "type": "notification.create",
-            "sender": instance.sender.username,
-            "recipient": instance.recipient.username
-        })
+            # "sender": instance.sender.username,
+            "sender": instance.messages.first().sender.username,
+            "recipient": instance.recipient.username,
+        },
+    )

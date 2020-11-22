@@ -12,32 +12,34 @@
 <ul id="notificationlist">
 </ul>
 
-<div><a href="{% url 'homepage' %}">Back to Homepage</a></div>
+<div>
+  <a href="{% url 'homepage' %}">Back to Homepage</a>
+</div>
 
 <script>
-const notificationSocket = new WebSocket(
-  (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
-  '//' + window.location.host + '/ws/'
-);
+  const notificationSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
+    '//' + window.location.host + '/ws/'
+  );
 
-notificationSocket.onmessage = function(e) {
+  notificationSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     console.log(data)
     if (data.type === 'notification') {
       document.querySelector("#notificationlist").innerHTML += `<li>notification from ${data.sender}</li>`
     }
-};
+  };
 
-notificationSocket.onclose = function(e) {
+  notificationSocket.onclose = function (e) {
     console.error('Chat socket closed unexpectedly');
-};
+  };
 
-document.querySelector("#test-button").addEventListener('click', (event) => {
-  event.preventDefault();
+  document.querySelector("#test-button").addEventListener('click', (event) => {
+    event.preventDefault();
 
-  notificationSocket.send(JSON.stringify({
+    notificationSocket.send(JSON.stringify({
       'message': 'notification'
-  }));
-})
+    }));
+  })
 </script>
 {% endblock %}

@@ -10,6 +10,7 @@ from .models import (
     Request,
     Note,
     DiscussionBoard,
+    Notification,
 )
 from maps.models import Location
 from mapbox_location_field.admin import MapAdmin
@@ -27,3 +28,4 @@ admin.site.register(Request)
 admin.site.register(DiscussionBoard)
 admin.site.register(Location, MapAdmin)
 admin.site.register(Note)
+admin.site.register(Notification)
