@@ -744,8 +744,6 @@ def notifications(request):
 
 class SocketViewSet(viewsets.ViewSet):
     def list(self, request):
-        queryset = Notification.objects.all()
-        serializer = NotificationSerializer(queryset, many=True)
         return render(request, "sockets.html")
 
 
