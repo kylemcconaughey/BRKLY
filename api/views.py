@@ -214,6 +214,10 @@ class UserViewSet(ModelViewSet):
         proposer = self.request.user
         receiver = User.objects.get(pk=pk)
         Request.objects.create(proposing=proposer, receiving=receiver, accepted=False)
+        notification = Notification.objects.create(
+            sender=self.request.user, recipient=receiver, trigger="Request"
+        )
+        notification.save()
         return Response(status=200)
 
     @action(detail=True, methods=["POST"])
@@ -292,7 +296,7 @@ class ConversationViewSet(ModelViewSet):
         ppl_to_notify = convo.members.exclude(id=self.request.user.id)
         for person in ppl_to_notify.all():
             notification = Notification.objects.create(
-                sender=self.request.user, recipient=person
+                sender=self.request.user, recipient=person, trigger="Message"
             )
             notification.save()
         return Response(status=201)

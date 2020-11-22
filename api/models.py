@@ -286,6 +286,7 @@ class Notification(TimeStampedModel, models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     opened = models.BooleanField(null=False, blank=False, default=False)
+    trigger = models.CharField(null=True, blank=True, max_length=255)
 
 
 @receiver(post_save, sender=Notification)
@@ -297,6 +298,7 @@ def send_new_notification_message(sender, instance, **kwargs):
             "type": "notification.create",
             "sender": instance.sender.username,
             "recipient": instance.recipient.username,
+            "trigger": instance.trigger,
         },
     )
 

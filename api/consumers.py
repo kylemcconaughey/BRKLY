@@ -27,6 +27,7 @@ class NotificationConsumer(WebsocketConsumer):
                     "type": "notification",
                     "sender": event["sender"],
                     "recipient": event["recipient"],
+                    "trigger": event["trigger"],
                 }
             )
         )
