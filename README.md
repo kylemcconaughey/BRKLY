@@ -42,6 +42,7 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | GET | `/dogs/tag_search/?=<search tearm>` | Returns a list of all dogs with attributes that match `search term` |  |
 | POST | `/requests/<req_pk>/accept/` | Sets `request.accepted = True`, adds `request.proposing` to `self.request.user`'s friends and vice versa |  |
 | POST | `/requests/<req_pk>/deny/` | Deletes `Request` object |  |
+| POST |   `/conversations/<convo_pk>/message/` | Creates a `Message` object - sender=`self`, convo=`<convo_pk>`, `read_by.add(self)` | Requires `body`, can include `image`, will not accept anything else |
 | POST | `/messages/<msg_pk>/read/` | Adds `self.request.user` to the message's `read` M2M field |  |
 | POST | `/comments/<pk>/like/` | Adds `self.request.user` to `Comment` object's `liked_by` list. | Removes `self.request.user` if already in `liked_by` list |
 | POST | `/comments/` | Create a new comment | Requires both `post` Foreign Key and `body` text |
