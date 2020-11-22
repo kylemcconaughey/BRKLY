@@ -729,17 +729,9 @@ class NoteViewSet(ModelViewSet):
         return Response(status=204)
 
 
-# make homepage viewset and serializer?
-@login_required
 def homepage(request):
     users = User.objects.all()
     return render(request, "homepage.html", {"users": users})
-
-
-# make notification viewset and serializer?
-@login_required
-def notifications(request):
-    return render(request, "sockets.html")
 
 
 class SocketViewSet(viewsets.ViewSet):

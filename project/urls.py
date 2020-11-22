@@ -12,7 +12,6 @@ urlpatterns = [
     path("", include("api.urls")),
     path("maps/", include("maps.urls")),
     path("homepage/", views.homepage, name="homepage"),
-    path("sockets/", views.notifications, name="sockets"),
     path(
         "notification/<int:recipient_pk>/",
         views.send_notification,
