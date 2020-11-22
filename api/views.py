@@ -23,6 +23,7 @@ from .models import (
     Post,
     Reaction,
     Request,
+    Notification,
 )
 from .serializers import (
     CommentPFSerializer,
@@ -43,6 +44,7 @@ from .serializers import (
     RequestSerializer,
     UserSearchSerializer,
     UserSerializer,
+    NotificationSerializer,
 )
 
 """
@@ -263,13 +265,20 @@ class ConversationViewSet(ModelViewSet):
     @action(detail=True, methods=["POST"])
     def message(self, request, pk):
         convo = Conversation.objects.filter(pk=pk).first()
+        body = request.data["body"]
         if self.request.user not in convo.members.all():
             raise PermissionDenied()
         message = Message.objects.create(
-            sender=self.request.user, conversation=convo, body=request.data["body"]
+            sender=self.request.user, conversation=convo, body=body
         )
         message.read_by.add(self.request.user)
         message.save()
+        ppl_to_notify = convo.members.exclude(id=self.request.user.id)
+        for person in ppl_to_notify.all():
+            notification = Notification.objects.create(
+                sender=self.request.user, recipient=person
+            )
+            notification.save()
         return Response(status=201)
 
     def get_queryset(self):
@@ -710,7 +719,8 @@ def homepage(request):
 # make notification viewset and serializer?
 @login_required
 def notifications(request):
-    return render(request, "notifications.html")
+    messages = Message.objects.all()
+    return render(request, "sockets.html")
 
 
 @login_required
@@ -719,3 +729,11 @@ def send_notification(request, recipient_pk):
 
     request.user.sent_notifications.create(recipient=recipient)
     return redirect(to="homepage")
+
+
+class NotificationViewSet(ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.all().select_related("sender", "recipient")

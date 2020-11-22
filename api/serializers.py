@@ -11,8 +11,18 @@ from .models import (
     Comment,
     Request,
     Note,
+    Notification,
 )
 from maps.models import Location
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender = serializers.StringRelatedField()
+    recipient = serializers.StringRelatedField()
+
+    class Meta:
+        model = Notification
+        fields = ["sender", "recipient", "created_at"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -83,12 +93,12 @@ class EmbeddedMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = [
+            "body",
             "url",
             "sender",
-            "time_sent",
-            "body",
-            "reactions",
             "image",
+            "time_sent",
+            "reactions",
             "read_by",
         ]
 
