@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     "storages",
     "mapbox_location_field",
     "channels",
-    "channels-reddis",
     # Project-specific
     "users",
     "api",
