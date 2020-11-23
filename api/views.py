@@ -29,6 +29,7 @@ from .serializers import (
     CommentPFSerializer,
     CommentSerializer,
     ConversationSerializer,
+    ConversationPFSerializer,
     DiscussionBoardPFSerializer,
     DiscussionBoardSerializer,
     DogSerializer,
@@ -290,8 +291,18 @@ class UserViewSet(ModelViewSet):
 
 
 class ConversationViewSet(ModelViewSet):
-    serializer_class = ConversationSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ConversationPFSerializer
+        return ConversationSerializer
+
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied()
+        convo = serializer.save(admin=self.request.user)
+        convo.members.add(self.request.user)
 
     @action(detail=True, methods=["POST"])
     def message(self, request, pk):

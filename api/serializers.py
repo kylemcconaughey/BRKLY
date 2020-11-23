@@ -104,6 +104,15 @@ class EmbeddedMessageSerializer(serializers.ModelSerializer):
         ]
 
 
+class ConversationPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Conversation
+        fields = [
+            "convo_name",
+            "members",
+        ]
+
+
 class ConversationSerializer(serializers.ModelSerializer):
     messages = EmbeddedMessageSerializer(many=True)
     members = EmbeddedUserSerializer(many=True)

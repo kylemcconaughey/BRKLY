@@ -72,7 +72,7 @@ class Dog(models.Model):
 
 
 class Conversation(models.Model):
-    members = models.ManyToManyField(to=User, related_name="conversations")
+    members = models.ManyToManyField(to=User, related_name="conversations", blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
