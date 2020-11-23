@@ -785,6 +785,10 @@ class NotificationViewSet(ModelViewSet):
             return Response(status=200)
         raise PermissionDenied()
 
+    @action(detail=False, methods=["POST"])
+    def ping(self, request):
+        pass
+
     """
     If we decide that having notification objects created for each message (and then having them stick around) is too much clutter, we can have `opening` them just delete the notification object instead. 
     """

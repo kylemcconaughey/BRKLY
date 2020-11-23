@@ -3,6 +3,7 @@ from users.models import User
 from maps.models import Location
 from django_extensions.db.models import TimeStampedModel
 import channels
+import channels.layers
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from asgiref.sync import async_to_sync
