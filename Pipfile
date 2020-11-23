@@ -28,6 +28,7 @@ django-mapbox-location-field = "*"
 channels = "*"
 channels-redis = "*"
 uvicorn = "*"
+websockets = "*"
 
 [requires]
 python_version = "3.8"
