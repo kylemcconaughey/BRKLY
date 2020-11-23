@@ -2,7 +2,7 @@ from django.db import models
 from users.models import User
 from maps.models import Location
 from django_extensions.db.models import TimeStampedModel
-from channels import *
+import channels
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from asgiref.sync import async_to_sync

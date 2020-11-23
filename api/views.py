@@ -97,6 +97,17 @@ class DogViewSet(ModelViewSet):
     def get_queryset(self):
         return Dog.objects.all().select_related("owner").order_by("-created_at")
 
+    @action(detail=False, methods=["GET"])
+    def mine(self, request):
+        dogs = (
+            Dog.objects.filter(owner=self.request.user)
+            .select_related("owner")
+            .order_by("-created_at")
+            .distinct()
+        )
+        serializer = DogSerializer(dogs, many=True, context={"request": request})
+        return Response(serializer.data)
+
     def retrieve(self, request, pk):
         dog = (
             Dog.objects.filter(pk=pk).select_related("owner").prefetch_related("posts")
