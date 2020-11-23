@@ -26,6 +26,12 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = ["url", "sender", "recipient", "opened", "created_at", "id"]
 
 
+class NotificationPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["recipient", "sender", "trigger"]
+
+
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location

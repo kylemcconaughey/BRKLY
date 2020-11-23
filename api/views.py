@@ -46,6 +46,7 @@ from .serializers import (
     UserSearchSerializer,
     UserSerializer,
     NotificationSerializer,
+    NotificationPFSerializer,
 )
 
 """
@@ -770,11 +771,23 @@ def send_notification(request, recipient_pk):
 
 
 class NotificationViewSet(ModelViewSet):
-    serializer_class = NotificationSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return NotificationPFSerializer
+        return NotificationSerializer
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Notification.objects.all().select_related("sender", "recipient")
+
+    @action(detail=False, methods=["GET"])
+    def mine(self, request):
+        notifs = Notification.objects.filter(recipient=self.request.user)
+        serializer = NotificationSerializer(
+            notifs, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
     def open(self, request, pk):
@@ -786,8 +799,15 @@ class NotificationViewSet(ModelViewSet):
         raise PermissionDenied()
 
     @action(detail=False, methods=["POST"])
+    # POST /notifications/ping/?p='superuser'
     def ping(self, request):
-        pass
+        info = request.GET.get("p")
+        person = User.objects.filter(username=info).first()
+        notification = Notification.objects.create(
+            sender=self.request.user, trigger="mention", recipient=person
+        )
+        notification.save()
+        return Response(status=201)
 
     """
     If we decide that having notification objects created for each message (and then having them stick around) is too much clutter, we can have `opening` them just delete the notification object instead. 

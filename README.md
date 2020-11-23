@@ -53,6 +53,8 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | POST | `/discussionboards/<db_pk>/downvote/` | Same as above but with downvotes | Both should be posted with empty bodies/no other data |
 | POST | `/notes/<note_db>/upvote/` | Adds `self.request.user` to note's upvotes M2M field | Removes `self.request.user` if already upvoted |  |
 | POST | `/notes/<note_db>/downvote/` | Same as above but with downvotes |  |
+| GET | `/notifications/mine/` | Returns a list of all of `self.request.user`'s notifications | Does not involve websockets at all, this is a semi-static list, in that it will update if the page is refreshed but not otherwise |
+| POST | `/notifications/ping/?p=<username>` | Creates a `Notification` object where `sender` = `self.request.user`, `recipient` = `<username>`, and `trigger` = `"mention"` | Do not put quotes or anything around `<username>` in the url, do not send anything in the body of the POSTing, the API will auto-fill everything |
 | GET | `/websockets/` | HTML page with unordered list of notifications | Currently points to an HTML template, needs to change but I'm not sure how - probably involves front-end setting up some websocket stuff to receive notifications? |
 
 ---------------------------------------------------------------
