@@ -779,11 +779,17 @@ class NotificationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.all().select_related("sender", "recipient")
+        return (
+            Notification.objects.all()
+            .select_related("sender", "recipient")
+            .order_by("-created_at")
+        )
 
     @action(detail=False, methods=["GET"])
     def mine(self, request):
-        notifs = Notification.objects.filter(recipient=self.request.user)
+        notifs = Notification.objects.filter(recipient=self.request.user).order_by(
+            "-created_at"
+        )
         serializer = NotificationSerializer(
             notifs, many=True, context={"request": request}
         )
@@ -804,7 +810,7 @@ class NotificationViewSet(ModelViewSet):
         info = request.GET.get("p")
         person = User.objects.filter(username=info).first()
         notification = Notification.objects.create(
-            sender=self.request.user, trigger="mention", recipient=person
+            sender=self.request.user, trigger="Mention", recipient=person
         )
         notification.save()
         return Response(status=201)
