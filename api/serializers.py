@@ -216,6 +216,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             "url",
             "username",
+            "id",
             "first_name",
             "last_name",
             "last_name_is_public",
