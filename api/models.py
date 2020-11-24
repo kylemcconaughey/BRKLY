@@ -77,9 +77,7 @@ class Conversation(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    convo_name = models.CharField(
-        null=False, blank=False, default="New Conversation", max_length=63
-    )
+    convo_name = models.CharField(null=False, blank=False, max_length=63)
 
     admin = models.ForeignKey(
         to=User, on_delete=models.CASCADE, related_name="adminconversations"
