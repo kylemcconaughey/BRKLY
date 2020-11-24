@@ -28,12 +28,14 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 ### Endpoints: 
 | HTTP Method | Endpoint | Result | Notes |
 | ----------- | -------- | -------| ----- |
-| POST | `/<basic model>/` | Creates a new instance |  |
-| GET | `/<basic model>/` | Returns a list of all instances of that model |  |
-| GET | `/<basic model>/<obj_pk>/` | Returns data about `<obj_pk>` object |  |
+| POST | `/<basic model>/` | Creates a new model object |  |
+| GET | `/<basic model>/` | Returns a list of all objects of that model |  |
+| GET | `/<basic model>/<obj_pk>/` | Returns the detail view for `<obj_pk>` |  |
 | POST | `/auth/token/login/` | Returns Auth Token | Requires `username` and `password` |
-| GET | `/admin/` | Not so much for the API |  |
-| -------- | ### User Friending/Following & Dog Endpoints, & Search | -------- | -------- |
+| GET | `/admin/` | Not so much for the API | But a very convenient admin panel |
+
+|     | Friending/Following, Dogs, & Search |  |  |
+| -------- | -------- | -------- | -------- |
 | POST | `/users/<user_pk>/follow/` | Adds self.request.user to `user_pk`'s follower list |  |
 | POST | `/users/<user_pk>/unfollow/` | Removes `self.request.user` from `user_pk`'s follower list |  |
 | POST | `/users/<user_pk>/request/` | Creates a `Request` object with `self.request.user` as proposing & `<user_pk>` as recieving |  |
@@ -41,24 +43,32 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | GET | `/users/search/?q=<search term>` | Returns a list of all users with `search term` in their user/first/last/dog's name |  |
 | GET | `/dogs/name_search/?=<search tearm>` | Returns a list of all dogs with names that match `search term` |  |
 | GET | `/dogs/tag_search/?=<search tearm>` | Returns a list of all dogs with attributes that match `search term` |  |
-| -------- | ### Requests, Convos, Messaging | -------- | -------- |
 | POST | `/requests/<req_pk>/accept/` | Sets `request.accepted = True`, adds `request.proposing` to `self.request.user`'s friends and vice versa |  |
 | POST | `/requests/<req_pk>/deny/` | Deletes `Request` object |  |
+
+|  | Convos & Messaging |  |  |
+| -------- | -------- | -------- | -------- |
 | POST |   `/conversations/<convo_pk>/message/` | Creates a `Message` object - sender=`self`, convo=`<convo_pk>`, `read_by.add(self)` | Requires `body`, can include `image`, will not accept anything else |
 | POST | `/messages/<msg_pk>/read/` | Adds `self.request.user` to the message's `read` M2M field |  |
-| POST | `/comments/<pk>/like/` | Adds `self.request.user` to `Comment` object's `liked_by` list. | Removes `self.request.user` if already in `liked_by` list |
-| POST | `/comments/` | Create a new comment | Requires both `post` Foreign Key and `body` text |
-| -------- | ### Social Media | -------- | -------- |
+
+|      | Social Media |          |          |
+| -------- | -------- | -------- | -------- |
 | POST | `/posts/<pk>/react/?r=<reaction>` | Creates a `Reaction` object of `<reaction>` for that post |  |
 | GET | `/posts/mine/` | Returns a list of all of `self.request.user`'s posts |  |
 | GET | `/posts/all/` | Returns a list of all posts from the logged-in user, their friends, and the people they follow |  |
 | GET | `/posts/theirs/?p=<user_pk>` | Returns a list of all of `user_pk`'s posts |  |
-| -------- | ### Discussion Forum | -------- | -------- |
+| POST | `/comments/` | Create a new comment | Requires both `post` Foreign Key and `body` text |
+| POST | `/comments/<pk>/like/` | Adds `self.request.user` to `Comment` object's `liked_by` list. | Removes `self.request.user` if already in `liked_by` list |
+
+|     | Discussion Forum |      |       |
+| -------- | -------- | -------- | -------- |
 | POST | `/discussionboards/<db_pk>/upvote/` | Adds `self.request.user` to board's upvotes M2M field | Removes `self.request.user` if already upvoted |
 | POST | `/discussionboards/<db_pk>/downvote/` | Same as above but with downvotes | Both should be posted with empty bodies/no other data |
 | POST | `/notes/<note_db>/upvote/` | Adds `self.request.user` to note's upvotes M2M field | Removes `self.request.user` if already upvoted |  |
 | POST | `/notes/<note_db>/downvote/` | Same as above but with downvotes |  |
-| -------- | ### Notifications/Websockets | -------- | -------- |
+
+|       | Notifications/Websockets |        |       |
+| -------- | -------- | -------- | -------- |
 | GET | `/notifications/mine/` | Returns a list of all of `self.request.user`'s notifications | Does not involve websockets at all, this is currently a semi-static list, in that it will update if the page is refreshed but not otherwise |
 | POST | `/notifications/ping/?p=<username>` | Creates a `Notification` object where `sender` = `self.request.user`, `recipient` = `<username>`, and `trigger` = `"mention"` | Do not put quotes or anything around `<username>` in the url, do not send anything in the body of the POSTing, the API will auto-fill everything |
 | GET | `/websockets/` | HTML page with unordered list of notifications | Currently points to an HTML template, needs to change but I'm not sure how - probably involves front-end setting up some websocket stuff to receive notifications? |
