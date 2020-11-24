@@ -1,6 +1,6 @@
 # [BRKLY: Backend API](https://brkly.herokuapp.com/)
 ![Barkley Logo](https://brkly.s3.amazonaws.com/post_images/barkley_logo.png "Barkley Logo")
-## BRKLY is a REST API built with Django, for use with the [Barkley](http://barkley.netlify.app/) front-end app using React. 
+### BRKLY is a REST API built with Django, for use with the [Barkley](http://barkley.netlify.app/) front-end app using React. 
 
 The [BRKLY API](https://brkly.herokuapp.com/) provides the backend & API of our Barkley app. Barkley allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed.
 
@@ -8,7 +8,7 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 
 ---------------------------------------------------------------
 
-### Models that exist
+## Models
 | Model | Notes |
 | ----- | ----- |
 | [User](https://brkly.herokuapp.com/users/) |  |
@@ -22,10 +22,11 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | [Comment](https://brkly.herokuapp.com/comments/) | Requires `post` and `body` |
 | [Reaction](https://brkly.herokuapp.com/reactions/) | Reaction is a CharField |
 | [Request](https://brkly.herokuapp.com/requests/) | proposing=`self.request.user`, recieving=`/users/<pk>/` |
+| [Notification](https://brkly.herokuapp.com/notifications) | trigger = Notification, Request, or Message |
 
 ---------------------------------------------------------------
 
-### Endpoints: 
+## Endpoints: 
 | HTTP Method | Endpoint | Result | Notes |
 | ----------- | -------- | -------| ----- |
 | POST | `/<basic model>/` | Creates a new model object |  |
@@ -34,17 +35,17 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | POST | `/auth/token/login/` | Returns Auth Token | Requires `username` and `password` |
 | GET | `/admin/` | Not so much for the API | But a very convenient admin panel |
 
-|     | Friending/Following, Dogs, & Search |  |  |
+|     | Friending/Following, Dogs, & Search |  |
 | -------- | -------- | -------- | -------- |
-| POST | `/users/<user_pk>/follow/` | Adds self.request.user to `user_pk`'s follower list |  |
-| POST | `/users/<user_pk>/unfollow/` | Removes `self.request.user` from `user_pk`'s follower list |  |
-| POST | `/users/<user_pk>/request/` | Creates a `Request` object with `self.request.user` as proposing & `<user_pk>` as recieving |  |
-| POST | `/users/<user_pk>/unfriend/` | Removes `<user_pk>` from `self.request.user`'s friend's list (it's symmetrical=True), deletes 'Request' object instance |  |
-| GET | `/users/search/?q=<search term>` | Returns a list of all users with `search term` in their user/first/last/dog's name |  |
-| GET | `/dogs/name_search/?=<search tearm>` | Returns a list of all dogs with names that match `search term` |  |
-| GET | `/dogs/tag_search/?=<search tearm>` | Returns a list of all dogs with attributes that match `search term` |  |
-| POST | `/requests/<req_pk>/accept/` | Sets `request.accepted = True`, adds `request.proposing` to `self.request.user`'s friends and vice versa |  |
-| POST | `/requests/<req_pk>/deny/` | Deletes `Request` object |  |
+| POST | `/users/<user_pk>/follow/` | Adds self.request.user to `user_pk`'s follower list |
+| POST | `/users/<user_pk>/unfollow/` | Removes `self.request.user` from `user_pk`'s follower list |
+| POST | `/users/<user_pk>/request/` | Creates a `Request` object with `self.request.user` as proposing & `<user_pk>` as recieving |
+| POST | `/users/<user_pk>/unfriend/` | Removes `<user_pk>` from `self.request.user`'s friend's list (it's symmetrical=True), deletes 'Request' object instance |
+| GET | `/users/search/?q=<search term>` | Returns a list of all users with `search term` in their user/first/last/dog's name |
+| GET | `/dogs/name_search/?=<search tearm>` | Returns a list of all dogs with names that match `search term` |
+| GET | `/dogs/tag_search/?=<search tearm>` | Returns a list of all dogs with attributes that match `search term` |
+| POST | `/requests/<req_pk>/accept/` | Sets `request.accepted = True`, adds `request.proposing` to `self.request.user`'s friends and vice versa |
+| POST | `/requests/<req_pk>/deny/` | Deletes `Request` object |
 
 |  | Convos & Messaging |  |  |
 | -------- | -------- | -------- | -------- |
