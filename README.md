@@ -49,6 +49,7 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | POST | `/posts/<pk>/react/?r=<reaction>` | Creates a `Reaction` object of `<reaction>` for that post |  |
 | GET | `/posts/mine/` | Returns a list of all of `self.request.user`'s posts |  |
 | GET | `/posts/all/` | Returns a list of all posts from the logged-in user, their friends, and the people they follow |  |
+| GET | `/posts/theirs/?p=<user_pk>` | Returns a list of all of `user_pk`'s posts |  |
 | POST | `/discussionboards/<db_pk>/upvote/` | Adds `self.request.user` to board's upvotes M2M field | Removes `self.request.user` if already upvoted |
 | POST | `/discussionboards/<db_pk>/downvote/` | Same as above but with downvotes | Both should be posted with empty bodies/no other data |
 | POST | `/notes/<note_db>/upvote/` | Adds `self.request.user` to note's upvotes M2M field | Removes `self.request.user` if already upvoted |  |

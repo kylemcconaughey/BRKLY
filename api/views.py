@@ -509,6 +509,14 @@ class PostViewSet(ModelViewSet):
         post.save()
         return Response(201)
 
+    @action(detail=False, methods=["GET"])
+    def theirs(self, request):
+        pk = request.GET.get("p")
+        user = User.objects.filter(pk=pk).first()
+        posts = Post.objects.filter(user=user)
+        serializer = PostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
+
     def retrieve(self, request, pk):
         post = (
             Post.objects.filter(pk=pk)
