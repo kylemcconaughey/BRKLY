@@ -417,7 +417,14 @@ class MessageViewSet(ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
             raise PermissionDenied()
-        serializer.save(sender=self.request.user)
+        obj = serializer.save(sender=self.request.user)
+        convo = obj.conversation
+        ppl_to_notify = convo.members.exclude(id=self.request.user.id)
+        for person in ppl_to_notify.all():
+            notification = Notification.objects.create(
+                sender=self.request.user, recipient=person, trigger="Message"
+            )
+            notification.save()
 
     @action(detail=True, methods=["POST"])
     def read(self, request, pk):
