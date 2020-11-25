@@ -401,6 +401,7 @@ class EmbeddedNoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = [
             "url",
+            "id",
             "body",
             "user",
             "posted_at",
