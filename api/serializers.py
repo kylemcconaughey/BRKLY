@@ -372,6 +372,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = [
             "url",
+            "id",
             "body",
             "board",
             "user",
