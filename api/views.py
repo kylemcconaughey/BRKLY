@@ -655,6 +655,49 @@ class PostViewSet(ModelViewSet):
         raise PermissionDenied()
 
 
+class NoteViewSet(ModelViewSet):
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return NotePFSerializer
+        return NoteSerializer
+
+    permission_classes = [IsAuthenticated, PostMaker]
+
+    def get_queryset(self):
+        return Note.objects.all()
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            return serializer.save(user=self.request.user)
+        raise PermissionDenied()
+
+    @action(detail=True, methods=["POST"])
+    def upvote(self, request, pk):
+        note = Note.objects.filter(pk=pk).first()
+        if self.request.user not in note.upvotes.all():
+            note.upvotes.add(self.request.user)
+            note.num_upvotes += 1
+            note.save()
+            return Response(status=201)
+        note.upvotes.remove(self.request.user)
+        note.num_upvotes -= 1
+        note.save()
+        return Response(status=204)
+
+    @action(detail=True, methods=["POST"])
+    def downvote(self, request, pk):
+        note = Note.objects.filter(pk=pk).first()
+        if self.request.user not in note.downvotes.all():
+            note.downvotes.add(self.request.user)
+            note.num_downvotes += 1
+            note.save()
+            return Response(status=201)
+        note.downvotes.remove(self.request.user)
+        note.num_downvotes -= 1
+        note.save()
+        return Response(status=204)
+
+
 class DiscussionBoardViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -662,6 +705,14 @@ class DiscussionBoardViewSet(ModelViewSet):
         return DiscussionBoardSerializer
 
     permission_classes = [IsAuthenticated]
+
+    @action(detail=True, methods=["POST"])
+    def note(self, request, pk):
+        body = request.data.get("body")
+        board = DiscussionBoard.objects.filter(pk=pk).first()
+        note = Note.objects.create(board=board, user=self.request.user, body=body)
+        note.save()
+        return Response(status=201)
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -769,49 +820,6 @@ class LocationViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Location.objects.all().order_by("-created_at")
-
-
-class NoteViewSet(ModelViewSet):
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return NotePFSerializer
-        return NoteSerializer
-
-    permission_classes = [IsAuthenticated, PostMaker]
-
-    def get_queryset(self):
-        return Note.objects.all()
-
-    def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            return serializer.save(user=self.request.user)
-        raise PermissionDenied()
-
-    @action(detail=True, methods=["POST"])
-    def upvote(self, request, pk):
-        note = Note.objects.filter(pk=pk).first()
-        if self.request.user not in note.upvotes.all():
-            note.upvotes.add(self.request.user)
-            note.num_upvotes += 1
-            note.save()
-            return Response(status=201)
-        note.upvotes.remove(self.request.user)
-        note.num_upvotes -= 1
-        note.save()
-        return Response(status=204)
-
-    @action(detail=True, methods=["POST"])
-    def downvote(self, request, pk):
-        note = Note.objects.filter(pk=pk).first()
-        if self.request.user not in note.downvotes.all():
-            note.downvotes.add(self.request.user)
-            note.num_downvotes += 1
-            note.save()
-            return Response(status=201)
-        note.downvotes.remove(self.request.user)
-        note.num_downvotes -= 1
-        note.save()
-        return Response(status=204)
 
 
 def homepage(request):
