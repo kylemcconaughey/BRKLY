@@ -290,6 +290,53 @@ class UserViewSet(ModelViewSet):
         serializer = UserSerializer(user, context={"request": request})
         return Response(serializer.data)
 
+    @action(detail=False, methods=["GET"])
+    def me(self, request):
+        me = (
+            User.objects.filter(id=self.request.user.id)
+            .prefetch_related(
+                "dogs",
+                "conversations",
+                "meetups",
+                "adminconversations",
+                "meetupsadmin",
+                "posts",
+                "comments",
+                "followers",
+                "friends",
+                "requests_sent",
+                "requests_received",
+                "received_notifications",
+            )
+            .annotate(
+                num_followers=Count("followers", distinct=True),
+                num_conversations=Count("conversations", distinct=True),
+                num_friends=Count("friends", distinct=True),
+                friend_requests=Count(
+                    "requests_received",
+                    filter=Q(requests_received__accepted=False),
+                    distinct=True,
+                ),
+                unread_messages=(
+                    Count(
+                        "conversations__messages",
+                        distinct=True,
+                    )
+                )
+                - (Count("messages_read", distinct=True)),
+                notifications=(
+                    Count(
+                        "received_notifications",
+                        filter=Q(received_notifications__opened=False),
+                        distinct=True,
+                    )
+                ),
+            )
+            .first()
+        )
+        serializer = UserSerializer(me, context={"request": request})
+        return Response(serializer.data)
+
 
 class ConversationViewSet(ModelViewSet):
     def get_serializer_class(self):
