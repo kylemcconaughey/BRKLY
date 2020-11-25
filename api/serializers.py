@@ -381,6 +381,7 @@ class NoteSerializer(serializers.ModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
+            "niceCreated",
         ]
 
 
@@ -406,6 +407,7 @@ class EmbeddedNoteSerializer(serializers.ModelSerializer):
             "num_upvotes",
             "num_downvotes",
             "total_votes",
+            "niceCreated",
         ]
 
 

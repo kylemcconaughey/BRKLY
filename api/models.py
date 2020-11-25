@@ -7,6 +7,7 @@ import channels.layers
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from asgiref.sync import async_to_sync
+from datetime import datetime, timedelta
 
 
 class Dog(models.Model):
@@ -274,6 +275,10 @@ class Note(models.Model):
 
     def total_votes(self):
         return self.num_upvotes - self.num_downvotes
+
+    def niceCreated(self):
+        nice_created = self.posted_at - timedelta(hours=5)
+        return nice_created.strftime("%A at %I:%M %p")
 
 
 class Notification(TimeStampedModel, models.Model):
