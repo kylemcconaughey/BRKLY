@@ -103,7 +103,7 @@ class Reaction(models.Model):
     )
 
     def __str__(self):
-        return f"reaction_id: {self.id} | {self.reaction}"
+        return f"reaction_id: {self.id} | {self.reaction} by {self.user.username}"
 
 
 class Message(models.Model):
