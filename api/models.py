@@ -103,7 +103,7 @@ class Reaction(models.Model):
     )
 
     def __str__(self):
-        return f"reaction_id: {self.id} | {self.reaction} by {self.user.username}"
+        return f"reaction_id: {self.id} | {self.reaction}"
 
 
 class Message(models.Model):
@@ -128,9 +128,14 @@ class Message(models.Model):
     read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
     def __str__(self):
+        def convoLen():
+            if len(self.conversation.convo_name) < 30:
+                return self.conversation.convo_name
+            return self.conversation.convo_name[:30] + "..."
+
         if len(self.body) < 30:
-            return f"{self.sender.username}: '{self.body}' in {self.conversation.convo_name[:20]}"
-        return f"{self.sender.username}: '{self.body[:30]}...' in {self.conversation.convo_name[:20]}"
+            return f"{self.sender.username}: '{self.body}' in '{convoLen()}'"
+        return f"{self.sender.username}: '{self.body[:30]}...' in '{convoLen()}'"
 
 
 class Meetup(models.Model):
