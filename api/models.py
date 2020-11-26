@@ -7,7 +7,7 @@ import channels.layers
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from asgiref.sync import async_to_sync
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 class Dog(models.Model):
@@ -72,6 +72,9 @@ class Dog(models.Model):
         max_length=1, choices=ChildrenChoices.choices, default=ChildrenChoices.Y
     )
 
+    def __str__(self):
+        return f"{self.name} | Owner: {self.owner.username}"
+
 
 class Conversation(models.Model):
     members = models.ManyToManyField(to=User, related_name="conversations", blank=True)
@@ -87,6 +90,9 @@ class Conversation(models.Model):
     def preview(self):
         pass
 
+    def __str__(self):
+        return f"Convo: {self.convo_name} | Admin: {self.admin.username}"
+
 
 class Reaction(models.Model):
 
@@ -95,6 +101,9 @@ class Reaction(models.Model):
     user = models.ForeignKey(
         to=User, on_delete=models.CASCADE, related_name="reactions", null=True
     )
+
+    def __str__(self):
+        return f"reaction_id: {self.id} | {self.reaction} by {self.user.username}"
 
 
 class Message(models.Model):
@@ -118,6 +127,11 @@ class Message(models.Model):
 
     read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
+    def __str__(self):
+        if len(self.body) < 30:
+            return f"{self.sender.username}: '{self.body}' in {self.conversation.convo_name[:20]}"
+        return f"{self.sender.username}: '{self.body[:30]}...' in {self.conversation.convo_name[:20]}"
+
 
 class Meetup(models.Model):
     admin = models.ForeignKey(
@@ -137,6 +151,11 @@ class Meetup(models.Model):
         null=True,
         blank=True,
     )
+
+    def __str__(self):
+        return (
+            f"Meetup {self.id} | Admin: {self.admin} | Location: {self.location.name}"
+        )
 
 
 class Post(models.Model):
@@ -203,7 +222,12 @@ class Post(models.Model):
     reactions = models.ManyToManyField(to="Reaction", related_name="post", blank=True)
 
     def __str__(self):
-        return f"{self.id}"
+        def bLen():
+            if len(self.body) > 30:
+                return f"{self.body[:30]}" + "..."
+            return self.body
+
+        return f"By {self.user.username}" + f", about {self.dog.name}" + f": {bLen()}"
 
 
 class Comment(models.Model):
@@ -220,7 +244,11 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return f"{self.body}"
+        if len(self.body) < 30:
+            return f"{self.user.username}: '{self.body}' on Post #{self.post.id}"
+        return (
+            f"{self.user.username}: '{self.body[:30]}'" + f"... on Post #{self.post.id}"
+        )
 
 
 class Request(models.Model):
@@ -233,6 +261,11 @@ class Request(models.Model):
     )
 
     accepted = models.BooleanField(blank=False, null=False, default=False)
+
+    def __str__(self):
+        return (
+            f"{self.proposing}" + " requested to be friends w/ " + f"{self.receiving}"
+        )
 
 
 class DiscussionBoard(models.Model):
@@ -250,7 +283,9 @@ class DiscussionBoard(models.Model):
     downvotes = models.ManyToManyField(to=User, related_name="downvotes", blank=True)
 
     def __str__(self):
-        return f"{self.title}"
+        if len(self.title) < 20:
+            return f"{self.title}"
+        return f"{self.title[:20]}..."
 
 
 class Note(models.Model):
@@ -280,6 +315,11 @@ class Note(models.Model):
         nice_created = self.posted_at - timedelta(hours=5)
         return nice_created.strftime("%A at %I:%M %p")
 
+    def __str__(self):
+        if len(self.body) < 30:
+            return f"{self.user.username}: '{self.body}' on '{self.board}'"
+        return f"{self.user.username}: '{self.body[:30]}" + f"...' on '{self.board}'"
+
 
 class Notification(TimeStampedModel, models.Model):
     sender = models.ForeignKey(
@@ -291,6 +331,20 @@ class Notification(TimeStampedModel, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     opened = models.BooleanField(null=False, blank=False, default=False)
     trigger = models.CharField(null=True, blank=True, max_length=255)
+
+    def __str__(self):
+        def notified():
+            if self.trigger == "Message":
+                return " messaged "
+            elif self.trigger == "Request":
+                return " friend requested "
+            return " pinged "
+
+        def nice_created():
+            when = self.created_at - timedelta(hours=5)
+            return when.strftime("%A at %I:%M %p")
+
+        return f"{self.sender.username}{notified()}{self.recipient.username} on {nice_created()} | n_id:{self.id}"
 
 
 @receiver(post_save, sender=Notification)

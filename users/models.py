@@ -37,3 +37,21 @@ class User(AbstractUser):
     friends = models.ManyToManyField(
         "self", related_name="friends", symmetrical=True, blank=True
     )
+
+    def __str__(self):
+        def fName():
+            if self.first_name is None:
+                return ""
+            return f"{self.first_name} "
+
+        def lName():
+            if self.last_name is None:
+                return ""
+            return f"{self.last_name} "
+
+        def uName():
+            if self.first_name is None and self.last_name is None:
+                return f"{self.username}"
+            return f"({self.username})"
+
+        return f"{fName()}{lName()}{uName()}"

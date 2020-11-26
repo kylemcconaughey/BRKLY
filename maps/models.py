@@ -39,3 +39,17 @@ class Location(models.Model):
         null=True,
         blank=True,
     )
+
+    def __str__(self):
+        def loc_type():
+            if self.location_type == "HO":
+                return "House"
+            elif self.location_type == "PA":
+                return "Park"
+            elif self.location_type == "RE":
+                return "Restaurant"
+            elif self.location_type == "VE":
+                return "Veterinarian"
+            return "Trail"
+
+        return f"{loc_type()} called '{self.name[:50]}'"
