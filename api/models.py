@@ -127,6 +127,10 @@ class Message(models.Model):
 
     read_by = models.ManyToManyField(to=User, related_name="messages_read", blank=True)
 
+    def niceCreated(self):
+        nice_created = self.time_sent - timedelta(hours=5)
+        return nice_created.strftime("%A at %I:%M %p")
+
     def __str__(self):
         def convoLen():
             if len(self.conversation.convo_name) < 30:
@@ -247,6 +251,10 @@ class Comment(models.Model):
     liked_by = models.ManyToManyField(
         to=User, related_name="liked_comments", blank=True
     )
+
+    def niceCreated(self):
+        nice_created = self.posted_at - timedelta(hours=5)
+        return nice_created.strftime("%A at %I:%M %p")
 
     def __str__(self):
         if len(self.body) < 30:

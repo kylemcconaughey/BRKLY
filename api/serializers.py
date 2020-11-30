@@ -107,6 +107,7 @@ class EmbeddedMessageSerializer(serializers.ModelSerializer):
             "time_sent",
             "reactions",
             "read_by",
+            "niceCreated",
         ]
 
 
@@ -277,6 +278,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             "reactions",
             "image",
             "read_by",
+            "niceCreated",
         ]
 
 
@@ -321,7 +323,16 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["user", "post", "body", "id", "url", "posted_at", "liked_by"]
+        fields = [
+            "user",
+            "post",
+            "body",
+            "id",
+            "url",
+            "posted_at",
+            "liked_by",
+            "niceCreated",
+        ]
 
 
 class PostPFSerializer(serializers.HyperlinkedModelSerializer):
