@@ -314,7 +314,7 @@ class EmbeddedCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["user", "body", "url", "posted_at", "liked_by"]
+        fields = ["user", "body", "url", "posted_at", "liked_by", "niceCreated"]
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
