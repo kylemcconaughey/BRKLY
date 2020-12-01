@@ -7,14 +7,24 @@ class NotificationConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
         self.user = self.scope["user"]
-        async_to_sync(self.channel_layer.group_add)(
-            f"user-{self.user.pk}", self.channel_name
-        )
+        if self.user.is_authenticated:
+            async_to_sync(self.channel_layer.group_add)(
+                f"user-{self.user.pk}", self.channel_name
+            )
+
+            self.send(
+                text_data=json.dumps(
+                    {
+                        "user": self.user.username,
+                    }
+                )
+            )
 
     def disconnect(self, close_code):
         pass
 
     def receive(self, text_data):
+        # await login(self.scope, user)
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 

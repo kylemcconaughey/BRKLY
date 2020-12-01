@@ -353,6 +353,10 @@ class ConversationViewSet(ModelViewSet):
         convo = serializer.save(admin=self.request.user)
         convo.members.add(self.request.user)
 
+    @action(detail=False, methods=["GET"])
+    def mine(self, request):
+        pass
+
     @action(detail=True, methods=["POST"])
     def message(self, request, pk):
         convo = Conversation.objects.filter(pk=pk).first()
