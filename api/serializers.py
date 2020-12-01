@@ -56,6 +56,23 @@ class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["username", "url", "picture", "id"]
 
 
+class DogPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dog
+        fields = [
+            "name",
+            "breed",
+            "picture",
+            "age",
+            "size",
+            "energy",
+            "temper",
+            "group_size",
+            "vaccinated",
+            "kid_friendly",
+        ]
+
+
 class DogSerializer(serializers.ModelSerializer):
     owner = EmbeddedUserSerializer()
 

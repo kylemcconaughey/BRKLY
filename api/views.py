@@ -33,6 +33,7 @@ from .serializers import (
     DiscussionBoardPFSerializer,
     DiscussionBoardSerializer,
     DogSerializer,
+    DogPFSerializer,
     LocationSerializer,
     MeetupSerializer,
     MessagePFSerializer,
@@ -90,7 +91,11 @@ class IsSelf(BasePermission):
 
 
 class DogViewSet(ModelViewSet):
-    serializer_class = DogSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return DogPFSerializer
+        return DogSerializer
+
     permission_classes = [
         IsAuthenticated,
         IsOwner,
