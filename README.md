@@ -44,6 +44,7 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | GET | `/users/search/?q=<search term>` | Returns a list of all users with `search term` in their user/first/last/dog's name |  |
 | GET | `/dogs/name_search/?=<search tearm>` | Returns a list of all dogs with names that match `search term` |  |
 | GET | `/dogs/tag_search/?=<search tearm>` | Returns a list of all dogs with attributes that match `search term` |  |
+| GET | `/dogs/theirs/?p=<user_pk>/` | Returns a list of all of `<user_pk>`'s dogs |  |
 | POST | `/requests/<req_pk>/accept/` | Sets `request.accepted = True`, adds `request.proposing` to `self.request.user`'s friends and vice versa |  |
 | POST | `/requests/<req_pk>/deny/` | Deletes `Request` object |  |
 

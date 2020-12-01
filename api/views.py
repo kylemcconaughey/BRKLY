@@ -116,6 +116,14 @@ class DogViewSet(ModelViewSet):
         serializer = DogSerializer(dogs, many=True, context={"request": request})
         return Response(serializer.data)
 
+    @action(detail=False, methods=['GET'])
+    def theirs(self, request):
+        pk = request.GET.get('p')
+        them = User.objects.filter(pk=pk).first()
+        dogs = Dog.objects.filter(owner=them)
+        serializer = DogSerializer(dogs, many=True, context={'request': request})
+        return Response(serializer.data)
+
     def retrieve(self, request, pk):
         dog = (
             Dog.objects.filter(pk=pk).select_related("owner").prefetch_related("posts")
