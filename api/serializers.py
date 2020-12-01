@@ -53,7 +53,7 @@ class EmbeddedLocationSerializer(serializers.ModelSerializer):
 class EmbeddedUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "url", "id"]
+        fields = ["username", "url", "picture", "id"]
 
 
 class DogSerializer(serializers.ModelSerializer):
