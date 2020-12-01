@@ -166,6 +166,15 @@ class EmbeddedMeetupSerializer(serializers.ModelSerializer):
         ]
 
 
+class RequestPFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Request
+        fields = [
+            "proposing",
+            "receiving",
+        ]
+
+
 class RequestSerializer(serializers.ModelSerializer):
     proposing = EmbeddedUserSerializer()
     receiving = EmbeddedUserSerializer()

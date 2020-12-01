@@ -43,6 +43,7 @@ from .serializers import (
     PostSerializer,
     ReactionSerializer,
     RequestSerializer,
+    RequestPFSerializer,
     UserSearchSerializer,
     UserSerializer,
     NotificationSerializer,
@@ -227,9 +228,14 @@ class UserViewSet(ModelViewSet):
     def request(self, request, pk):
         proposer = self.request.user
         receiver = User.objects.get(pk=pk)
-        Request.objects.create(proposing=proposer, receiving=receiver, accepted=False)
+        req = Request.objects.create(
+            proposing=proposer, receiving=receiver, accepted=False
+        )
+        req.save()
         notification = Notification.objects.create(
-            sender=self.request.user, recipient=receiver, trigger="Request"
+            sender=self.request.user,
+            recipient=receiver,
+            trigger=f"https://brkly.herokuapp.com/requests/{req.id}/",
         )
         notification.save()
         return Response(status=200)
@@ -371,7 +377,9 @@ class ConversationViewSet(ModelViewSet):
         ppl_to_notify = convo.members.exclude(id=self.request.user.id)
         for person in ppl_to_notify.all():
             notification = Notification.objects.create(
-                sender=self.request.user, recipient=person, trigger="Message"
+                sender=self.request.user,
+                recipient=person,
+                trigger=f"https://brkly.herokuapp.com/conversations/{convo.id}/",
             )
             notification.save()
         return Response(status=201)
@@ -426,7 +434,11 @@ class ConversationViewSet(ModelViewSet):
 
 
 class RequestViewSet(ModelViewSet):
-    serializer_class = RequestSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return RequestPFSerializer
+        return RequestSerializer
+
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -474,7 +486,9 @@ class MessageViewSet(ModelViewSet):
         ppl_to_notify = convo.members.exclude(id=self.request.user.id)
         for person in ppl_to_notify.all():
             notification = Notification.objects.create(
-                sender=self.request.user, recipient=person, trigger="Message"
+                sender=self.request.user,
+                recipient=person,
+                trigger=f"https://brkly.herokuapp.com/conversations/{convo.id}/",
             )
             notification.save()
 
@@ -885,7 +899,9 @@ class NotificationViewSet(ModelViewSet):
         info = request.GET.get("p")
         person = User.objects.filter(username=info).first()
         notification = Notification.objects.create(
-            sender=self.request.user, trigger="Mention", recipient=person
+            sender=self.request.user,
+            trigger=f"https://brkly.herokuapp.com/users/{self.request.user.id}/",
+            recipient=person,
         )
         notification.save()
         return Response(status=201)
