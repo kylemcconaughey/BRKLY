@@ -66,6 +66,7 @@ This was the final project for [Momentum Learning](https://www.momentumlearn.com
 | -------- | -------- | -------- | -------- |
 | POST | `/discussionboards/<db_pk>/upvote/` | Adds `self.request.user` to board's upvotes M2M field | Removes `self.request.user` if already upvoted |
 | POST | `/discussionboards/<db_pk>/downvote/` | Same as above but with downvotes | Both should be posted with empty bodies/no other data |
+| GET | `/discussionboards/search/?q=<search_term>` | Returns a list of all discussion boards with titles or bodies that have `<search_term>` in them | No "/" at the end of the url |
 | POST | `/notes/<note_db>/upvote/` | Adds `self.request.user` to note's upvotes M2M field | Removes `self.request.user` if already upvoted |  |
 | POST | `/notes/<note_db>/downvote/` | Same as above but with downvotes |  |
 

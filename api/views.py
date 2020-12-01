@@ -116,12 +116,12 @@ class DogViewSet(ModelViewSet):
         serializer = DogSerializer(dogs, many=True, context={"request": request})
         return Response(serializer.data)
 
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=["GET"])
     def theirs(self, request):
-        pk = request.GET.get('p')
+        pk = request.GET.get("p")
         them = User.objects.filter(pk=pk).first()
         dogs = Dog.objects.filter(owner=them)
-        serializer = DogSerializer(dogs, many=True, context={'request': request})
+        serializer = DogSerializer(dogs, many=True, context={"request": request})
         return Response(serializer.data)
 
     def retrieve(self, request, pk):
@@ -737,6 +737,50 @@ class DiscussionBoardViewSet(ModelViewSet):
         return DiscussionBoardSerializer
 
     permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=["GET"])
+    def search(self, request):
+        term = request.GET.get("q")
+        boards = (
+            DiscussionBoard.objects.filter(
+                Q(title__icontains=term) | Q(body__icontains=term)
+            )
+            .order_by("-posted_at")
+            .select_related("user")
+            .prefetch_related(
+                (
+                    Prefetch(
+                        "notes",
+                        queryset=Note.objects.annotate(
+                            total_votes=(
+                                (Count("upvotes", distinct=True))
+                                - (Count("downvotes", distinct=True))
+                            ),
+                        )
+                        .order_by("-total_votes", "-num_upvotes", "num_downvotes")
+                        .distinct(),
+                    )
+                ),
+                "upvotes",
+                "downvotes",
+                "notes__upvotes",
+                "notes__downvotes",
+            )
+            .annotate(
+                num_upvotes=Count("upvotes", distinct=True),
+                num_downvotes=Count("downvotes", distinct=True),
+                total_votes=(
+                    (Count("upvotes", distinct=True))
+                    - (Count("downvotes", distinct=True))
+                ),
+                num_notes=Count("notes", distinct=True),
+                num_note_upvotes=Count("notes__upvotes", distinct=True),
+            )
+        )
+        serializer = DiscussionBoardSerializer(
+            boards, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
 
     @action(detail=True, methods=["POST"])
     def note(self, request, pk):
