@@ -113,12 +113,14 @@ class EmbeddedMessageSerializer(serializers.ModelSerializer):
     read_by = serializers.SlugRelatedField(
         slug_field="username", read_only=True, many=True
     )
+    conversation = serializers.SlugRelatedField(slug_field="convo_name", read_only=True)
 
     class Meta:
         model = Message
         fields = [
             "body",
             "url",
+            "conversation",
             "sender",
             "image",
             "time_sent",
