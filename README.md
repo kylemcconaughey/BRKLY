@@ -4,7 +4,7 @@
 
 The [BRKLY API](https://brkly.herokuapp.com/) provides the backend & API of our Barkley app. Barkley allows users to create dog and owner profiles, connect with other users via direct message and discussion boards, schedule meetups based on location, and share posts to a newsfeed.
 
-This was the final project for [Momentum Learning](https://www.momentumlearn.com/), created by [Clint Jordan](https://github.com/clintjordan5) and [Kyle McConaughey](https://github.com/kylemcconaughey).
+This was the final project for [Momentum Learning](https://www.momentumlearn.com/), created by [Kyle McConaughey](https://github.com/kylemcconaughey) and [Clint Jordan](https://github.com/clintjordan5).
 
 ---------------------------------------------------------------
 
