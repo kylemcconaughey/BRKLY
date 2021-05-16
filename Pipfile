@@ -29,6 +29,7 @@ channels = "*"
 channels-redis = "*"
 uvicorn = "*"
 websockets = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
