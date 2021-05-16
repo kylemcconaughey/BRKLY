@@ -964,7 +964,9 @@ class NotificationViewSet(ModelViewSet):
         return Response(status=201)
 
     """
-    If we decide that having notification objects created for each message (and then having them stick around) is too much clutter, we can have `opening` them just delete the notification object instead. 
+    If we decide that having notification objects created for each message 
+    (and then having them stick around) is too much clutter, 
+    we can have `opening` them just delete the notification object instead. 
     """
     # @action(detail=True, methods=["POST"])
     # def open(self, request, pk):
