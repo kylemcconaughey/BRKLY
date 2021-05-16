@@ -30,6 +30,8 @@ channels-redis = "*"
 uvicorn = "*"
 websockets = "*"
 pytest = "*"
+pytest-django = "*"
+factory-boy = "*"
 
 [requires]
 python_version = "3.8"
